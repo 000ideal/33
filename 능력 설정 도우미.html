@@ -1,0 +1,577 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=33626"></script></head><body>
+<title>능력 설정 도우미</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;800&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* 레이아웃: 세계관 소개 이미지와 같은 톤. 삼색 띠, 한 줄 제목, 흰 카드 사이에 검은 출력 형식 박스 하나만 어둡게. */
+:root {
+  --bg: #f3f4f7;
+  --surface: #ffffff;
+  --ink: #141821;
+  --muted: #5b6375;
+  --line: #dfe2e8;
+  --guild: #3d5bd9;
+  --command: #5f6b2e;
+  --bureau: #c8925f;
+  --guild-deep: #2a3f9f;
+  --bureau-deep: #a8703f;
+  --field: #f8f9fb;
+  --ink-chip: #3b4252;
+  --command-deep: #4a5424;
+  --bubble: #e8ebf3;
+  --code-bg: #141821;
+  --code-ink: #e6e9ef;
+  --font-body: 'Noto Sans KR', system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, Menlo, Consolas, 'Noto Sans KR', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151c; --surface: #1b1f29; --ink: #eceef3; --muted: #a3aab8; --line: #2b3140;
+    --guild: #7f98ff; --command: #a3b06a; --bureau: #d9a574;
+    --guild-deep: #4a63e0; --bureau-deep: #b8793f;
+    --field: #151922; --bubble: #2a3040; --ink-chip: #5b6375; --command-deep: #6a7a30; --code-bg: #0b0d12; --code-ink: #e6e9ef;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151c; --surface: #1b1f29; --ink: #eceef3; --muted: #a3aab8; --line: #2b3140;
+  --guild: #7f98ff; --command: #a3b06a; --bureau: #d9a574;
+  --guild-deep: #4a63e0; --bureau-deep: #b8793f;
+  --field: #151922; --bubble: #2a3040; --ink-chip: #5b6375; --command-deep: #6a7a30; --code-bg: #0b0d12; --code-ink: #e6e9ef;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 32px;
+  line-height: 1.5;
+}
+.wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 36px; }
+.eyebrow { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.2em; color: var(--muted); }
+.strip { display: flex; height: 8px; width: 180px; margin-top: 14px; }
+.strip i { flex: 1; }
+.strip i:nth-child(1) { background: var(--guild); }
+.strip i:nth-child(2) { background: var(--command); }
+.strip i:nth-child(3) { background: var(--bureau); }
+h1 { margin: 18px 0 8px; font-size: clamp(32px, 8vw, 44px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; text-wrap: balance; }
+.sub { margin: 0; font-size: 18px; color: var(--muted); }
+.label { font-size: 13px; font-weight: 500; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 10px; }
+section { min-width: 0; }
+
+.steps { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.steps li { display: flex; gap: 16px; align-items: baseline; font-size: 17px; }
+.steps b { font-family: var(--font-mono); font-size: 18px; width: 22px; flex: none; }
+
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.mode { position: relative; }
+.mode input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.mode label {
+  display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; min-height: 84px;
+  background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--tone);
+}
+.mode.a { --tone: var(--guild); --tone-deep: var(--guild-deep); }
+.mode.b { --tone: var(--bureau); --tone-deep: var(--bureau-deep); }
+.mode .name { font-size: 20px; font-weight: 800; }
+.mode .hint { font-size: 15px; color: var(--muted); }
+.mode input:checked + label { border: 3px solid var(--tone-deep); border-top: 8px solid var(--tone); padding: 14px 16px; }
+.mode input:focus-visible + label { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field label { font-size: 17px; font-weight: 800; }
+.field .note { font-size: 15px; color: var(--muted); margin: 0; }
+textarea {
+  width: 100%; min-height: 150px; resize: vertical; padding: 14px 16px; font: inherit; font-size: 17px; line-height: 1.6;
+  color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 0;
+}
+textarea:focus-visible { outline: 3px solid var(--ink); outline-offset: 1px; }
+#out { min-height: 340px; font-family: var(--font-mono); font-size: 15px; line-height: 1.65; background: var(--surface); }
+
+.actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+button.copy {
+  font: inherit; font-size: 18px; font-weight: 800; color: #fff; background: var(--tone-deep, var(--guild-deep));
+  border: 0; padding: 14px 26px; min-height: 52px; cursor: pointer;
+}
+button.copy:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.status { font-size: 16px; color: var(--muted); }
+
+.code { background: var(--code-bg); color: var(--code-ink); padding: 22px 22px; font-family: var(--font-mono); font-size: 15px; line-height: 1.75; overflow-x: auto; white-space: pre; margin: 0; }
+.preview { background: var(--code-bg); }
+.preview .bar { display: flex; justify-content: space-between; gap: 12px; padding: 10px 22px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em; color: #a3aab8; border-bottom: 1px solid #2b3140; }
+.note-line { margin: -2px 0 12px; font-size: 16px; color: var(--muted); }
+.tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.tabs button { font: inherit; font-size: 16px; font-weight: 500; padding: 8px 16px; min-height: 44px; background: var(--surface); color: var(--ink); border: 2px solid var(--line); cursor: pointer; }
+.tabs button[aria-selected="true"] { border-color: var(--ink); font-weight: 800; }
+.tabs button:focus-visible, .more:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.chat { background: var(--surface); border: 1px solid var(--line); padding: 20px 16px; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.msg { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.msg .who { font-size: 13px; font-weight: 500; letter-spacing: 0.08em; color: var(--muted); }
+.msg.me { align-items: flex-end; }
+.msg.me .bubble { max-width: 94%; background: var(--bubble); padding: 14px 16px; border-radius: 18px 18px 4px 18px; min-width: 0; }
+.clip { font-size: 14px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 190px; overflow: hidden; position: relative; }
+.bubble.open .clip { max-height: none; }
+.bubble:not(.open) .clip::after { content: ""; position: absolute; inset: auto 0 0 0; height: 56px; background: linear-gradient(to bottom, transparent, var(--bubble)); }
+.more { margin-top: 8px; font: inherit; font-size: 15px; font-weight: 800; color: var(--ink); background: transparent; border: 0; padding: 8px 0; min-height: 44px; cursor: pointer; text-decoration: underline; }
+.model { display: inline-block; font-size: 15px; font-weight: 800; letter-spacing: 0; color: #fff; background: var(--bureau-deep); padding: 3px 12px; }
+.reply { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.reply .code { padding: 18px 18px; font-size: 14px; }
+.ai-note { margin: 0; font-size: 16px; line-height: 1.65; }
+.railbar { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+.pos { font-family: var(--font-mono); font-size: 15px; color: var(--muted); }
+.navs { display: flex; gap: 8px; }
+.nav { font: inherit; font-size: 26px; line-height: 1; width: 44px; height: 44px; background: var(--surface); color: var(--ink); border: 2px solid var(--line); cursor: pointer; }
+.nav:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.nav:disabled { opacity: 0.35; cursor: default; }
+.rail { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 10px 0 12px; margin-top: 4px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; min-width: 0; }
+.rail:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.card { flex: 0 0 min(86%, 340px); scroll-snap-align: start; scroll-snap-stop: always; background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--guild-deep); padding: 18px 18px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card[data-g="B"], .card[data-g="C"] { border-top-color: var(--command-deep); }
+.card[data-g="D"], .card[data-g="E"], .card[data-g="F"] { border-top-color: var(--bureau-deep); }
+.card .tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.card .cname { font-size: 26px; font-weight: 800; line-height: 1.25; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.card .fam { font-size: 15px; color: var(--muted); }
+.card .skills { padding: 12px 0; }
+.card .sk { grid-template-columns: 1fr; gap: 2px; }
+.card .minibtn { margin-top: auto; align-self: stretch; text-align: center; }
+.hint-swipe { margin: 0; font-size: 14px; color: var(--muted); text-align: center; }
+.rand .card { flex: none; width: 100%; max-width: 100%; border-top-width: 8px; }
+@media (hover: hover) and (pointer: fine) { .rail { cursor: grab; scroll-snap-type: none; } }
+.rail.dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; -webkit-user-select: none; }
+.h2 { margin: 0 0 12px; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+.h2.big { font-size: 26px; padding-top: 12px; border-top: 1px solid var(--line); }
+.count { font-size: 16px; font-weight: 500; color: var(--muted); margin-left: 6px; }
+.rand { background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--bureau); padding: 18px 16px; margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.rand-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.rand-head .h2 { margin: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.chip { font: inherit; font-size: 16px; font-weight: 500; min-height: 44px; padding: 6px 16px; background: var(--surface); color: var(--ink); border: 2px solid var(--line); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 800; }
+.chip:focus-visible, .rowbtn:focus-visible, summary:focus-visible, .minibtn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+details.item { background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+details.item[open] { border-color: var(--ink); }
+details.item summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-height: 56px; }
+details.item summary::-webkit-details-marker { display: none; }
+details.item summary::after { content: "+"; margin-left: auto; font-family: var(--font-mono); font-size: 22px; color: var(--muted); }
+details.item[open] summary::after { content: "−"; }
+.grade { flex: none; font-family: var(--font-mono); font-weight: 700; font-size: 16px; min-width: 34px; text-align: center; padding: 3px 8px; color: #fff; background: var(--ink-chip); }
+.grade[data-g="S"] { background: var(--guild-deep); }
+.grade[data-g="A"] { background: var(--guild-deep); }
+.grade[data-g="B"] { background: var(--command-deep); }
+.grade[data-g="C"] { background: var(--command-deep); }
+.iname { font-size: 18px; font-weight: 800; min-width: 0; overflow-wrap: anywhere; }
+.ifam { font-size: 15px; color: var(--muted); white-space: nowrap; }
+.body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.skills { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.sk { display: grid; grid-template-columns: 7.5em 1fr; gap: 4px 12px; font-size: 16px; line-height: 1.5; }
+.sk b { font-weight: 800; }
+.lim { font-size: 16px; line-height: 1.55; }
+.lim span { font-size: 13px; font-weight: 500; letter-spacing: 0.1em; color: var(--muted); margin-right: 8px; }
+.minibtn { align-self: flex-start; font: inherit; font-size: 16px; font-weight: 800; color: #fff; background: var(--guild-deep); border: 0; padding: 10px 20px; min-height: 44px; cursor: pointer; }
+.empty { color: var(--muted); font-size: 16px; }
+@media (max-width: 440px) { .sk { grid-template-columns: 1fr; } .ifam { display: none; } details.item[open] .ifam { display: inline; } }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.chips span { font-size: 15px; font-weight: 500; background: var(--surface); border: 2px solid var(--line); padding: 4px 12px; }
+.example { background: var(--surface); border: 1px solid var(--line); border-top: 8px solid var(--bureau); padding: 22px; font-family: var(--font-mono); font-size: 15px; line-height: 1.75; overflow-x: auto; white-space: pre; margin: 0; }
+.tips { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 17px; }
+footer { border-top: 1px solid var(--line); padding-top: 20px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 15px; color: var(--muted); }
+footer span:last-child { font-family: var(--font-mono); letter-spacing: 0.14em; font-size: 13px; }
+@media (max-width: 440px) { .modes { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: no-preference) { .mode label { transition: border-color .12s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">ABILITY GUIDE</div>
+    <div class="strip" aria-hidden="true"><i></i><i></i><i></i></div>
+    <h1>능력 설정 도우미</h1>
+    <p class="sub">견본에서 바로 고르거나, 외부 AI에 붙여넣을 프롬프트로 직접 만들어요.</p>
+  </header>
+
+
+  <section aria-labelledby="h-sample">
+    <p class="label" id="h-sample">견본에서 바로 쓰기</p>
+    <p class="note-line">마음에 드는 능력을 복사해서 유저 노트에 붙여넣어요.</p>
+
+    <div class="rand">
+      <div class="rand-head">
+        <h2 class="h2" id="h-rand">랜덤 뽑기</h2>
+        <button type="button" class="copy" id="rand-btn">랜덤으로 뽑기</button>
+      </div>
+      <div class="rand-out" id="rand-out" aria-live="polite" hidden></div>
+    </div>
+
+    <h2 class="h2" id="h-list">견본 목록 <span class="count" id="count"></span></h2>
+    <div class="filters" role="group" aria-label="분류">
+      <button type="button" class="chip" data-cat="" aria-pressed="true">전체</button>
+      <button type="button" class="chip" data-cat="화려한 능력" aria-pressed="false">화려한 능력</button>
+      <button type="button" class="chip" data-cat="독특한 능력" aria-pressed="false">독특한 능력</button>
+    </div>
+    <div class="filters" role="group" aria-label="등급" id="grades"></div>
+    <div class="railbar">
+      <span class="pos" id="pos" aria-live="polite"></span>
+      <span class="navs">
+        <button type="button" class="nav" id="prev" aria-label="이전 견본">&lsaquo;</button>
+        <button type="button" class="nav" id="next" aria-label="다음 견본">&rsaquo;</button>
+      </span>
+    </div>
+    <div class="rail" id="list" tabindex="0" role="region" aria-label="견본 카드 목록. 좌우로 넘겨 보세요"></div>
+    <p class="hint-swipe" id="swipe">옆으로 밀어서 넘겨 보세요</p>
+    <p class="empty" id="empty" hidden>조건에 맞는 견본이 없어요.</p>
+  </section>
+
+  <section aria-labelledby="h-make">
+    <h2 class="h2 big" id="h-make">마음에 드는 게 없다면, 직접 만들기</h2>
+    <p class="note-line">외부 AI(Claude·GPT·Gemini)에 붙여넣을 프롬프트를 만들어요.</p>
+  </section>
+
+  <section aria-labelledby="h-steps">
+    <p class="label" id="h-steps">사용 방법</p>
+    <ol class="steps">
+      <li><b>1</b><span>방식을 고르고 내용을 입력해요.</span></li>
+      <li><b>2</b><span>완성된 프롬프트를 복사해 외부 AI에 붙여넣어요.</span></li>
+      <li><b>3</b><span>나온 결과를 유저 노트에 붙여넣어요.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-mode">
+    <p class="label" id="h-mode">방식 선택</p>
+    <div class="modes" role="radiogroup" aria-labelledby="h-mode">
+      <div class="mode a">
+        <input type="radio" name="mode" id="mode-a" value="a" checked>
+        <label for="mode-a"><span class="name">A 프로필 맞춤</span><span class="hint">내 유저 프로필에 어울리는 능력</span></label>
+      </div>
+      <div class="mode b">
+        <input type="radio" name="mode" id="mode-b" value="b">
+        <label for="mode-b"><span class="name">B 자유 생성</span><span class="hint">원하는 방향으로 만드는 능력</span></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="field">
+    <label for="input" id="in-label">내 유저 프로필</label>
+    <p class="note" id="in-note">유저 프로필을 그대로 붙여넣어요.</p>
+    <textarea id="input" placeholder="여기에 입력해요"></textarea>
+  </section>
+
+  <section aria-labelledby="h-out">
+    <p class="label" id="h-out">완성된 프롬프트</p>
+    <textarea id="out" readonly aria-labelledby="h-out"></textarea>
+    <div class="actions">
+      <button type="button" class="copy" id="copy">프롬프트 복사</button>
+      <span class="status" id="status" role="status" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-fmt">
+    <p class="label" id="h-fmt">이렇게 나오면 성공이에요</p>
+    <p class="note-line">실제로 이 프롬프트를 넣고 받은 답변이에요.</p>
+    <div class="tabs" id="tabs" role="tablist" aria-label="AI 선택" hidden></div>
+    <div class="chat" id="chat" aria-live="polite">
+      <div class="msg me">
+        <div class="who">나</div>
+        <div class="bubble">
+          <div class="clip" id="me-text"></div>
+          <button type="button" class="more" id="more" aria-expanded="false">전체 보기</button>
+        </div>
+      </div>
+      <div class="msg ai">
+        <div class="who"><span class="model" id="model">클로드</span></div>
+        <div class="reply">
+          <pre class="code" id="ai-code" tabindex="0"></pre>
+          <p class="ai-note" id="ai-note"></p>
+        </div>
+      </div>
+    </div>
+    <div class="chips"><span>능력명 10자 이내</span><span>스킬 설명 30자 이내</span><span>제약 60자 이내</span></div>
+  </section>
+
+  <section aria-labelledby="h-tip">
+    <p class="label" id="h-tip">참고</p>
+    <ul class="tips">
+      <li>글자 수가 조금 넘으면 직접 줄여서 붙여넣어요.</li>
+      <li>마음에 들지 않으면 다시 뽑거나 입력 방향을 바꿔 보세요.</li>
+    </ul>
+  </section>
+
+  <footer><span>이 세계의 삼권분립은 사이가 나쁘다</span><span>ABILITY GUIDE</span></footer>
+</div>
+
+<script>
+(function () {
+  var FORMAT = [
+    '✦등급: F·E·D·C·B·A·S 중 택1',
+    '✦능력: {10자 이내 단어·명사형}〡{계열명}',
+    '✦스킬:',
+    '{스킬명}〡{설명 30자 이내}',
+    '{스킬명}〡{설명 30자 이내}',
+    '{스킬명}〡{설명 30자 이내}',
+    '✦제약: {능력 사용시 필수 제약 60자 이내}'
+  ].join('\n');
+  var EXAMPLE = [
+    '✦등급: B등급',
+    '✦능력: 마감 압박〡강화계',
+    '✦스킬:',
+    '카운트다운〡제한 시간을 정하면 신체능력 급상승',
+    '막판 스퍼트〡남은 시간이 짧을수록 강화 폭 증가',
+    '초과 근무〡시간 초과 후 1분간 추가 행동',
+    '✦제약: 시간 안에 목표를 못 이루면 반동으로 탈진한다. 정한 시간은 도중에 바꿀 수 없다.'
+  ].join('\n');
+  var CFG = {
+    a: { label: '내 유저 프로필', note: '유저 프로필을 그대로 붙여넣어요.', ph: '여기에 내 유저 프로필을 붙여넣어요',
+         head: '아래 [유저 프로필]을 참고해, 이 인물에게 어울리는 각성 능력 1개와 스킬 3개를 만들어 줘.',
+         block: '[유저 프로필]', empty: '(여기에 유저 프로필을 붙여넣으세요)',
+         grade: '등급은 프로필에 어울리게 정한다.' },
+    b: { label: '원하는 능력 방향', note: '만들고 싶은 능력의 방향을 자유롭게 적어요.', ph: '여기에 원하는 능력의 방향을 적어요',
+         head: '아래 [원하는 능력 방향]을 살려, 각성 능력 1개와 스킬 3개를 만들어 줘.',
+         block: '[원하는 능력 방향]', empty: '(여기에 원하는 능력 방향을 적으세요)',
+         grade: '등급은 능력 방향의 강도에 맞게 정한다. 방향이 모호하면 어울리는 쪽으로 자유롭게 정한다.' }
+  };
+  var $ = function (id) { return document.getElementById(id); };
+  var input = $('input'), out = $('out'), status = $('status'), copyBtn = $('copy');
+  var mode = 'a';
+
+  function build(override) {
+    var c = CFG[mode];
+    var text = (override != null ? override : (input.value || '')).trim() || c.empty;
+    return [
+      c.head,
+      '현대 한국을 배경으로 한 헌터물 세계관이다. 각성자는 마력으로 능력을 쓰며, 판타지 직업이 아닌 현대 헌터물 톤으로 쓴다.',
+      '',
+      c.block,
+      text,
+      '',
+      '[출력 형식] 반드시 코드블럭으로 출력한다.',
+      FORMAT,
+      '',
+      '[규칙]',
+      '- 능력명은 10자 이내 단어·명사형, 스킬 설명은 30자 이내, 제약은 60자 이내로 쓴다. 글자 수를 직접 세어 넘으면 줄여서 출력한다.',
+      '- 제약은 필수다. 규모나 강도가 커질수록 비용이 늘거나 정밀도가 떨어지는 한계와, 할 수 없는 것을 함께 담는다.',
+      '- 지나치게 만능이거나 무적에 가까운 능력은 만들지 않는다.',
+      '- ' + c.grade,
+      '',
+      '[예시] 아래와 다른 방향으로 만든다.',
+      EXAMPLE
+    ].join('\n');
+  }
+  function render() {
+    var c = CFG[mode];
+    $('in-label').textContent = c.label;
+    $('in-note').textContent = c.note;
+    input.placeholder = c.ph;
+    out.value = build();
+    document.querySelectorAll('.mode').forEach(function (m) {
+      m.classList.contains(mode) && (copyBtn.style.background = getComputedStyle(m).getPropertyValue('--tone-deep'));
+    });
+  }
+  function save() {
+    try { localStorage.setItem('ability-guide', JSON.stringify({ mode: mode, a: store.a, b: store.b })); } catch (e) {}
+  }
+  var store = { a: '', b: '' };
+  try {
+    var s = JSON.parse(localStorage.getItem('ability-guide') || 'null');
+    if (s) { store.a = s.a || ''; store.b = s.b || ''; mode = s.mode === 'b' ? 'b' : 'a'; }
+  } catch (e) {}
+  $('mode-' + mode).checked = true;
+  input.value = store[mode];
+
+  document.querySelectorAll('input[name="mode"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      store[mode] = input.value;
+      mode = r.value; input.value = store[mode];
+      status.textContent = ''; render(); save();
+    });
+  });
+  input.addEventListener('input', function () { store[mode] = input.value; render(); save(); status.textContent = ''; });
+  copyBtn.addEventListener('click', function () {
+    var text = out.value;
+    function fallback() {
+      out.focus(); out.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      status.textContent = ok ? '복사했어요. 외부 AI에 붙여넣으세요.' : '프롬프트를 선택했어요. 길게 눌러 복사해 주세요.';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        status.textContent = '복사했어요. 외부 AI에 붙여넣으세요.';
+      }, fallback);
+    } else { fallback(); }
+  });
+
+  var EXAMPLES = [
+    { model: '클로드', mode: 'b', input: '슬쩍 보면 우스꽝스럽지만 자세히 보면 우습지 않은 능력',
+      out: ['✦등급: C등급','✦능력: 뽁뽁이〡완충계','✦스킬:','에어캡 포장〡대상을 기포막으로 감싸 충격을 흡수','터뜨리기〡터진 기포마다 흡수한 충격을 방출','기포 깔기〡바닥에 깐 기포가 터지면 침입자를 감지','✦제약: 넓게 감쌀수록 막이 얇아진다. 한도 초과 시 반동을 입고, 마력 공격은 흡수 못 한다.'].join('\n'),
+      note: '' },
+    { model: 'GPT', mode: 'b', input: '슬쩍 보면 우스꽝스럽지만 자세히 보면 우습지 않은 능력',
+      out: ['✦등급: A등급','✦능력: 마찰조율〡물리계','✦스킬:','헛디딤〡발밑 마찰을 지워 돌진과 균형을 무너뜨림','급정거〡접촉면 마찰을 높여 이동을 강제로 멈춤','손절〡손과 장비 사이 마찰을 낮춰 무장을 이탈시킴','✦제약: 면적·지속시간·변화 폭이 클수록 소모가 급증하고 정밀도가 낮아진다. 생체 내부와 비접촉면에는 적용할 수 없다.'].join('\n'),
+      note: '' },
+    { model: '제미나이', mode: 'b', input: '슬쩍 보면 우스꽝스럽지만 자세히 보면 우습지 않은 능력',
+      out: ['✦등급: B등급','✦능력: 미끄럼 주의〡특수계','✦스킬:','빙판 장판〡지정한 바닥의 마찰력을 완전히 제거','기름손〡대상이 쥐 무기와 장비의 마찰력 제거','빗겨치기〡표면 마찰을 없앤 공격의 궁도를 흘림','✦제약: 범위가 넓을수록 마력 소모가 급증한다. 생물 내부나 공중에 뜬 대상에는 적용할 수 없다.'].join('\n'),
+      note: '' }
+  ];
+  var exIdx = 0;
+  function showExample(i) {
+    exIdx = i; var e = EXAMPLES[i];
+    var save = mode; mode = e.mode; var p = build(e.input); mode = save;
+    $('me-text').textContent = p;
+    $('model').textContent = e.model;
+    $('ai-code').textContent = e.out;
+    $('ai-note').textContent = e.note; $('ai-note').hidden = !e.note;
+    var tabs = $('tabs');
+    if (EXAMPLES.length > 1) {
+      tabs.hidden = false; tabs.textContent = '';
+      EXAMPLES.forEach(function (x, j) {
+        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab');
+        b.setAttribute('aria-selected', j === i ? 'true' : 'false'); b.textContent = x.model;
+        b.addEventListener('click', function () { showExample(j); });
+        tabs.appendChild(b);
+      });
+    }
+  }
+  $('more').addEventListener('click', function () {
+    var bub = $('more').parentNode, open = !bub.classList.contains('open');
+    bub.classList.toggle('open', open);
+    $('more').setAttribute('aria-expanded', open ? 'true' : 'false');
+    $('more').textContent = open ? '접기' : '전체 보기';
+  });
+
+  var SAMPLES = [{"cat": "화려한 능력", "grade": "S", "skills": [["별빛 오리기", "허공을 갈라 밤하늘의 별빛을 물리적 칼날로 추출"], ["은하수 폭격", "찢어진 공간의 틈새로 압축된 성운 에너지를 쏟아냄"], ["절대 암막", "일정 구역을 우주 공간과 동일한 무중력·진공 상태로 격리"]], "name": "창공 재단사", "family": "공간계", "limit": "실내나 지하 등 하늘이 보이지 않는 곳에선 위력이 반감되며, 사용 후 시전자의 시력이 일시적으로 크게 저하된다."}, {"cat": "화려한 능력", "grade": "S", "skills": [["압살", "지정한 1m 공간의 중력을 10배로 높임"], ["부유", "대상의 중력을 없애 공중에 띄움"], ["낙하 타격", "자기 낙하 순간 중력을 실어 충격"]], "name": "국소 중력", "family": "중력계", "limit": "지정한 공간에 계속 집중해야 유지된다. 본인 몸에 쓰면 내장에 부담이 크다."}, {"cat": "화려한 능력", "grade": "S", "skills": [["거울 회랑", "주변을 거울 미로로 바꿔 시야 교란"], ["천면 분신", "거울마다 실체 분신이 하나씩 나타남"], ["파경", "거울을 깨서 그 파편을 일제히 쏘아 보냄"]], "name": "만화경", "family": "환영계", "limit": "분신은 한 대만 맞아도 깨진다. 본체가 거울에 비치지 않으면 회랑이 무너진다."}, {"cat": "화려한 능력", "grade": "S", "skills": [["별빛 표식", "밤하늘에 적의 위치를 별자리로 새김"], ["유성우", "표식한 자리에 별 조각을 비처럼 쏟아냄"], ["성좌 낙하", "거대한 별 하나를 끌어내려 일대를 초토화"]], "name": "성좌 강림", "family": "천체계", "limit": "하늘이 보이는 곳에서만 쓸 수 있다. 성좌 낙하를 쓰고 나면 하루 동안 능력 전체가 봉인된다."}, {"cat": "화려한 능력", "grade": "A", "skills": [["스타카토 탄환", "손끝의 지휘에 맞춰 공기 파열음을 고속 투사체로 발사"], ["크레센도 파동", "일정 박자 동안 축적한 음파를 터뜨려 광역 물리 타격"], ["절대 휴지부", "지휘봉을 멈추는 순간 반경 내 모든 소리와 움직임을 강제 정지"]], "name": "종말의 교향곡", "family": "음파계", "limit": "시전자가 정해진 박자와 리듬을 놓치면 스킬이 즉시 캔슬되며, 자신의 심장 박동이 곡의 템포에 강제로 동기화된다."}, {"cat": "화려한 능력", "grade": "A", "skills": [["크리스탈 코팅", "신체나 무기를 다이아몬드 경도의 붉은 수정으로 무장"], ["보석 가시밭", "지면을 타격해 적의 발밑에서 날카로운 수정 기둥들을 솟구치게 함"], ["산란하는 파편", "생성한 결정을 일제히 폭파해 빛의 속도로 파편을 난사"]], "name": "만물 결정화", "family": "변환계", "limit": "결정화를 유지하는 동안 시전자의 체온이 급격히 떨어지며, 10분을 초과하면 시전자의 혈액부터 서서히 결정화된다."}, {"cat": "화려한 능력", "grade": "A", "skills": [["불꽃 비상", "등에 화염 날개를 펼쳐 고속 비행"], ["깃털 사격", "날개에서 불꽃 깃털을 연사"], ["업화 강하", "날개를 접고 화염을 두른 채 돌진"]], "name": "홍염 날개", "family": "화염계", "limit": "날개를 펼치는 동안 체력이 계속 깎인다. 비가 오거나 물속에 있으면 날개가 꺼진다."}, {"cat": "화려한 능력", "grade": "A", "skills": [["꽃잎 칼날", "꽃잎을 강철처럼 단단하게 만들어 띄움"], ["낙화", "수천 장의 꽃잎으로 적을 휘감아 베어냄"], ["만개", "꽃잎을 한 송이로 모아 방어벽 생성"]], "name": "화우 검무", "family": "식물계", "limit": "살아 있는 꽃이 근처에 있어야 한다. 한 번 쓴 꽃잎은 시들어서 다시 쓸 수 없다."}, {"cat": "화려한 능력", "grade": "A", "skills": [["섬광 보법", "번개가 되어 30m를 순간 이동"], ["낙뢰 연격", "지나간 자리마다 번개가 내리꽂힘"], ["천둥 포효", "뇌성을 터뜨려 주변 적을 감전·경직"]], "name": "뇌명 질주", "family": "뇌전계", "limit": "이동은 직선으로만 할 수 있고, 꺾으려면 멈춰야 한다. 연속으로 쓰면 근육이 경련한다."}, {"cat": "화려한 능력", "grade": "A", "skills": [["거울막", "손바닥 앞에 원거리 공격을 반사하는 막 생성"], ["굴절", "반사 각도를 틀어 다른 적에게 돌림"], ["섬광", "막에 빛을 모아 순간 시야를 빼앗음"]], "name": "반사경", "family": "반사계", "limit": "근접 공격과 물리 타격은 막지 못한다. 막은 한 번 반사할 때마다 금이 간다."}, {"cat": "화려한 능력", "grade": "A", "skills": [["맞바꿈", "시야 내 대상과 내 위치를 즉시 교환"], ["대타", "위험에 처한 아군과 자리를 바꿔 구출"], ["뒤바꿈", "적 둘의 위치를 서로 바꿔 대열 붕괴"]], "name": "위치 교환", "family": "공간계", "limit": "비슷한 크기의 대상끼리만 바꿀 수 있다. 바꿀 대상이 없으면 아무 데도 못 간다."}, {"cat": "화려한 능력", "grade": "B", "skills": [["발자국 설치", "자신이 밟은 자리에 폭발 흔적을 남김"], ["연쇄 기폭", "남긴 흔적을 차례로 터뜨림"], ["지연 폭발", "흔적이 밟히는 순간 터지도록 설정"]], "name": "흔적 기폭", "family": "폭발계", "limit": "흔적은 30초 뒤 사라지고, 자신도 터지는 범위에 있으면 휘말린다."}, {"cat": "화려한 능력", "grade": "B", "skills": [["흡수", "받은 타격의 충격을 몸에 저장"], ["반환", "저장한 충격을 주먹에 실어 되돌림"], ["누적 폭발", "모아둔 충격을 한꺼번에 방출해 분쇄"]], "name": "충격 저장", "family": "역학계", "limit": "저장 한계를 넘는 충격은 그대로 들어온다. 저장한 충격은 10분이 지나면 흩어진다."}, {"cat": "화려한 능력", "grade": "B", "skills": [["암영 잠행", "자신의 육체를 그림자 속에 녹여 기척과 시각적 존재감을 은폐"], ["그림자 도약", "시야에 들어온 다른 사물의 그림자 속으로 순식간에 이동"], ["흑영의 칼날", "그림자를 응축해 물리적 실체를 지닌 예리한 단검을 생성"]], "name": "그림자 밟기", "family": "특수계", "limit": "강한 빛이 비춰 그림자가 사라지는 환경에서는 모든 스킬이 해제되며, 그림자 내부에 10초 이상 머물 수 없다."}, {"cat": "화려한 능력", "grade": "B", "skills": [["상처 재생", "손이 닿은 대상의 세포 재생을 촉진해 외상과 출혈을 빠르게 치유"], ["상태 정화", "체내에 침투한 독소나 저주, 정신적 상태 이상을 빛으로 정화"], ["활력 부여", "지친 아군에게 생명력을 나누어주어 체력과 스태미나를 일시 회복"]], "name": "생명의 성흔", "family": "치유계", "limit": "이미 절단된 신체 부위나 사망한 대상은 되살릴 수 없으며, 치유한 상처의 고통 일부를 시전자가 고스란히 느낀다."}, {"cat": "화려한 능력", "grade": "C", "skills": [["예고선", "0.5초 뒤 날아올 공격 궤적이 보임"], ["급소 표시", "상대 방어의 빈틈을 붉게 표시"], ["연계 예측", "상대 다음 동작 두 수를 미리 읽음"]], "name": "궤적 예고", "family": "감각계", "limit": "한 번에 한 명만 볼 수 있다. 보여도 피할 몸이 따라오지 못하면 의미가 없다."}, {"cat": "화려한 능력", "grade": "C", "skills": [["시야 링크", "시전자가 본 시야를 지정한 아군 최대 3명의 뇌리에 실시간 전송"], ["표식 각인", "눈으로 포착한 대상에게 붉은 잔상을 남겨 벽 너머에서도 위치 추적"], ["거리 측정", "목표물까지의 정확한 거리와 이동 속도를 수치화하여 파악"]], "name": "매의 표식", "family": "감지계", "limit": "시전자 본인의 신체 능력은 일반인과 다를 바 없으며, 표식을 유지하는 동안 극심한 눈의 피로와 두통을 겪는다."}, {"cat": "화려한 능력", "grade": "D", "skills": [["철갑화", "손에 쥔 신문지나 나뭇가지 등을 강철 수준의 경도로 일시 강화"], ["내구 보강", "방패나 무기 등 기존 장비의 파손 저항력을 2배로 끌어올림"], ["충격 흡수", "접촉한 표면의 탄성을 조절해 낙하 충격이나 타격 데미지를 완화"]], "name": "임시 경화", "family": "변환계", "limit": "시전자의 양손에 직접 닿아 있는 동안만 효과가 유지되며, 한 번에 자동차 크기 이상의 부피는 강화할 수 없다."}, {"cat": "독특한 능력", "grade": "B", "skills": [["무궁화 꽃", "시전자가 뒤돌아보는 순간 움직인 대상에게 경직 부여"], ["땅따먹기", "발로 그은 선 안쪽을 절대 방어 구역으로 설정"], ["깍두기 지정", "지정한 대상 1명을 아군·적군 모두와 물리적 접촉이 불가능하게 만듦"]], "name": "골목대장", "family": "규칙계", "limit": "대상에게 룰을 육성으로 명확히 설명해야 발동하며, 시전자 본인이 룰을 어길 경우 일반인의 3배에 달하는 충격을 입는다."}, {"cat": "독특한 능력", "grade": "B", "skills": [["엉뚱한 지목", "아무 근거 없이 대상을 범인으로 몰아 3초간 행동 불능 부여"], ["미란다 생략", "변명하려는 적의 음성을 차단하고 물리적 수갑을 강제 채움"], ["마피아 확정", "주변 아군 2명이 지목에 동조하면 대상의 방어력을 반감시킴"]], "name": "체포하겠어", "family": "규칙계", "limit": "손가락으로 대상을 가리키며 죄목을 큰 소리로 외쳐야 발동하며, 조금이라도 말문이 막히면 결박이 즉시 풀린다."}, {"cat": "독특한 능력", "grade": "B", "skills": [["퐁퐁", "손끝에서 비눗방울을 끝없이 불어냄"], ["방울 감옥", "적이나 투사체를 방울 안에 가둠"], ["톡", "가둔 방울을 터뜨려 안쪽에 충격을 줌"]], "name": "비눗방울", "family": "포획계", "limit": "날카로운 것에 닿으면 바로 터진다. 한 번에 가둘 수 있는 건 사람 크기까지다."}, {"cat": "독특한 능력", "grade": "C", "skills": [["폭발은 등지고", "등 뒤에서 일어나는 모든 폭발과 충격파의 데미지를 무시"], ["악당의 장광설", "적에게 질문을 던지면 최소 10초간 공격을 멈추고 대답하게 유도"], ["약속된 기사회생", "치명상을 입었을 때 단 한 번, 전투력을 2배로 끌어올림"]], "name": "주인공 보정", "family": "인과계", "limit": "시전자가 겁을 먹거나 도망치는 등 '주인공답지 못한' 행동을 하면 모든 효과가 즉시 사라지고 극심한 탈진에 빠진다."}, {"cat": "독특한 능력", "grade": "D", "skills": [["무료 반품", "적의 투사체나 마법 공격에 영수증을 붙여 발사 원점으로 되돌림"], ["묶음 배송", "단일 대상에게 건 디버프나 타격을 근처의 적 1명에게 동일하게 복제"], ["강제 환불", "최근 3초 내에 아군이 입은 피해와 소모한 체력을 이전 상태로 되돌림"]], "name": "만물 홈쇼핑", "family": "특수계", "limit": "스킬 사용 시 반드시 상업적인 홍보 멘트를 외쳐야 하며, 하루에 처리할 수 있는 총 물량(판정 횟수)이 10회로 제한된다."}, {"cat": "독특한 능력", "grade": "D", "skills": [["쾅!", "실제 충격의 방향을 글자로 표시"], ["삐빅", "기계 작동음을 작은 자막으로 띄움"], ["쓱", "스친 소리의 이동 궤적을 글자로 남김"]], "name": "자막 장인", "family": "감지계", "limit": "실제로 들리는 소리만 자막화 가능. 무음 공격과 너무 먼 소리는 놓친다."}, {"cat": "독특한 능력", "grade": "D", "skills": [["오리 소환", "고무 오리를 최대 20마리까지 소환"], ["꽥", "오리가 일제히 울어 적의 시선을 끌어감"], ["오리 폭탄", "지정한 오리를 터뜨려 연막 생성"]], "name": "꽥꽥 부대", "family": "소환계", "limit": "오리는 스스로 움직이지 못해서 던지거나 굴려야 한다. 물 위에서는 두 배로 소환된다."}, {"cat": "독특한 능력", "grade": "E", "skills": [["녹색불 동기화", "횡단보도에 도착하는 타이밍에 맞춰 신호등이 파란불로 바뀜"], ["모서리 회피", "어두운 방을 걸어 다닐 때 새끼발가락이 가구 모서리에 찧지 않음"], ["완벽한 껍질", "삶은 달걀이나 귤껍질을 단 한 번도 끊어지지 않고 통째로 까냄"]], "name": "소확행 마스터", "family": "인과계", "limit": "위기 상황이나 전투 중에는 자동으로 비활성화되며, 능력을 쓴 날 밤에는 반드시 꿈자리가 뒤숭숭해진다."}, {"cat": "독특한 능력", "grade": "E", "skills": [["의미심장한 바람", "대사를 칠 때 실내에서도 머리카락과 옷자락이 멋있게 휘날림"], ["후광 발사", "등 뒤에서 정체불명의 은은한 조명 효과를 3초간 발생시킴"], ["브금 착시", "주변 3m 내 사람들에게 상황에 맞는 효과음이 들리는 듯한 착각 유발"]], "name": "시선 스틸러", "family": "감각계", "limit": "물리적인 방어력이나 공격력은 전혀 없으며, 능력이 발동되는 동안 시전자 본인의 발이 바닥에 고정되어 움직일 수 없다."}, {"cat": "독특한 능력", "grade": "E", "skills": [["정전기 축적", "옷감을 비비거나 걸어 다니며 체표면에 미세한 정전기를 저장"], ["따끔한 터치", "손끝이 닿은 대상에게 불쾌한 정전기 충격을 주어 순간 움찔하게 함"], ["먼지 자석", "주변의 가벼운 종잇조각이나 머리카락, 먼지를 몸에 달라붙게 만듦"]], "name": "인간 피카츄", "family": "원소계", "limit": "습도가 높은 날이나 비가 오면 능력이 완전히 봉인되며, 문고리를 잡을 때마다 본인이 먼저 정전기에 놀란다."}, {"cat": "독특한 능력", "grade": "E", "skills": [["존재감 희석", "벽에 등을 붙이고 숨을 참으면 행인들이 시전자를 배경으로 착각함"], ["평범한 행인", "어느 집단에 섞여도 원래 그곳 소속인 것처럼 자연스러운 분위기 연출"], ["시선 회피", "상대방이 시전자의 얼굴을 스치듯 보아도 인상착의를 기억하지 못함"]], "name": "투명 인간 지망생", "family": "특수계", "limit": "조금이라도 소리를 내거나 공격 의사를 드러내면 즉시 들키며, 이미 시전자를 주시하고 있는 대상에겐 통하지 않는다."}, {"cat": "독특한 능력", "grade": "F", "skills": [["적당히", "손에 든 음료를 미지근하게 만듦"], ["식힘 불가", "뜨겁게도 차갑게도 못 하고 미지근하게만 함"], ["영원한 미지근", "한 번 미지근해진 건 30분간 유지"]], "name": "미지근함", "family": "온도계", "limit": "음료를 원래 온도로 되돌릴 수 없다. 아이스 아메리카노가 제일 먼저 희생된다."}, {"cat": "독특한 능력", "grade": "F", "skills": [["양말 공명", "한 짝만 남은 양말을 쥐면 나머지 한 짝의 위치를 나침반처럼 가리킴"], ["리모컨 감응", "이불이나 소파 틈새에 파묻힌 리모컨·이어폰의 위치를 진동으로 알림"], ["동전 스캔", "반경 5m 내 가구 밑이나 길바닥에 떨어진 동전의 개수를 정확히 파악"]], "name": "짝꿍 탐지기", "family": "감지계", "limit": "가치가 높거나 중요한 물건은 감지하지 못하며, 하루에 3번 이상 사용하면 사소한 물건들에 대한 집착이 강해져 멍해진다."}];
+  function sampleText(x) {
+    return ['✦등급: ' + x.grade + '등급', '✦능력: ' + x.name + '〡' + x.family, '✦스킬:']
+      .concat(x.skills.map(function (k) { return k[0] + '〡' + k[1]; }))
+      .concat(['✦제약: ' + x.limit]).join('\n');
+  }
+  function copyText(text, btn, label) {
+    function done(ok) {
+      var old = label || btn.textContent;
+      btn.textContent = ok ? '복사했어요' : '길게 눌러 복사해 주세요';
+      setTimeout(function () { btn.textContent = old; }, 1800);
+    }
+    function fb() {
+      var t = document.createElement('textarea'); t.value = text; t.setAttribute('readonly', '');
+      t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(t); done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, fb);
+    else fb();
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function bodyFor(x) {
+    var b = el('div', 'body'), sk = el('div', 'skills');
+    x.skills.forEach(function (k) { var r = el('div', 'sk'); r.appendChild(el('b', '', k[0])); r.appendChild(el('span', '', k[1])); sk.appendChild(r); });
+    b.appendChild(sk);
+    var l = el('div', 'lim'); l.appendChild(el('span', '', '제약')); l.appendChild(document.createTextNode(x.limit)); b.appendChild(l);
+    var c = el('button', 'minibtn', '이 능력 복사'); c.type = 'button';
+    c.addEventListener('click', function () { copyText(sampleText(x), c, '이 능력 복사'); });
+    b.appendChild(c);
+    return b;
+  }
+  function headFor(x) {
+    var g = el('span', 'grade', x.grade); g.setAttribute('data-g', x.grade); g.setAttribute('aria-label', x.grade + '등급');
+    return [g, el('span', 'iname', x.name), el('span', 'ifam', x.family)];
+  }
+  var fCat = '', fGrade = '';
+  function cardFor(x) {
+    var c = el('article', 'card'); c.setAttribute('data-g', x.grade);
+    var tags = el('div', 'tags'), g = el('span', 'grade', x.grade);
+    g.setAttribute('data-g', x.grade); g.setAttribute('aria-label', x.grade + '등급');
+    tags.appendChild(g); tags.appendChild(el('span', 'fam', x.family)); c.appendChild(tags);
+    c.appendChild(el('div', 'cname', x.name));
+    var sk = el('div', 'skills');
+    x.skills.forEach(function (k) { var r = el('div', 'sk'); r.appendChild(el('b', '', k[0])); r.appendChild(el('span', '', k[1])); sk.appendChild(r); });
+    c.appendChild(sk);
+    var l = el('div', 'lim'); l.appendChild(el('span', '', '제약')); l.appendChild(document.createTextNode(x.limit)); c.appendChild(l);
+    var btn = el('button', 'minibtn', '이 능력 복사'); btn.type = 'button';
+    btn.addEventListener('click', function () { copyText(sampleText(x), btn, '이 능력 복사'); });
+    c.appendChild(btn);
+    return c;
+  }
+  var shown = 0;
+  function updatePos() {
+    var rail = $('list'), cards = rail.children, n = cards.length;
+    if (!n) { $('pos').textContent = ''; $('prev').disabled = true; $('next').disabled = true; return; }
+    var step = cards[0].getBoundingClientRect().width + 12;
+    shown = Math.min(n - 1, Math.max(0, Math.round(rail.scrollLeft / step)));
+    $('pos').textContent = (shown + 1) + ' / ' + n;
+    $('prev').disabled = rail.scrollLeft <= 2;
+    $('next').disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 2;
+  }
+  function renderList() {
+    var rail = $('list'); rail.textContent = ''; var n = 0;
+    SAMPLES.forEach(function (x) {
+      if ((fCat && x.cat !== fCat) || (fGrade && x.grade !== fGrade)) return;
+      n++; rail.appendChild(cardFor(x));
+    });
+    rail.scrollLeft = 0;
+    $('count').textContent = '(' + n + '개)'; $('empty').hidden = n > 0; $('swipe').hidden = n < 2;
+    updatePos();
+  }
+  $('list').addEventListener('scroll', function () { window.requestAnimationFrame(updatePos); });
+  function go(dir) {
+    var rail = $('list'); if (!rail.children.length) return;
+    var step = rail.children[0].getBoundingClientRect().width + 12;
+    rail.scrollBy({ left: dir * step, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }
+  $('prev').addEventListener('click', function () { go(-1); });
+  $('next').addEventListener('click', function () { go(1); });
+  $('list').addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+  });
+  window.addEventListener('resize', updatePos);
+  (function mouseDrag() {
+    var rail = $('list'), drag = null;
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (fine) $('swipe').textContent = '마우스로 끌거나 \u2039 \u203a 버튼으로 넘겨 보세요';
+    function stepW() { return rail.children.length ? rail.children[0].getBoundingClientRect().width + 12 : 1; }
+    rail.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || e.target.closest('button')) return;
+      drag = { x: e.clientX, left: rail.scrollLeft, id: e.pointerId, dx: 0 };
+      rail.classList.add('dragging');
+      try { rail.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    rail.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      drag.dx = e.clientX - drag.x;
+      rail.scrollLeft = drag.left - drag.dx;
+    });
+    function end(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      drag = null;
+      rail.classList.remove('dragging');
+      updatePos();
+    }
+    rail.addEventListener('pointerup', end);
+    rail.addEventListener('pointercancel', end);
+  })();
+  (function setupFilters() {
+    var grades = ['S', 'A', 'B', 'C', 'D', 'E', 'F'], box = $('grades');
+    var all = el('button', 'chip', '모든 등급'); all.type = 'button'; all.setAttribute('data-grade', ''); all.setAttribute('aria-pressed', 'true'); box.appendChild(all);
+    grades.forEach(function (g) {
+      if (!SAMPLES.some(function (x) { return x.grade === g; })) return;
+      var b = el('button', 'chip', g); b.type = 'button'; b.setAttribute('data-grade', g); b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', g + '등급'); box.appendChild(b);
+    });
+    function press(group, btn) { group.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-pressed', c === btn ? 'true' : 'false'); }); }
+    document.querySelectorAll('[data-cat]').forEach(function (b) {
+      b.addEventListener('click', function () { fCat = b.getAttribute('data-cat'); press(b.parentNode, b); renderList(); });
+    });
+    box.querySelectorAll('.chip').forEach(function (b) {
+      b.addEventListener('click', function () { fGrade = b.getAttribute('data-grade'); press(box, b); renderList(); });
+    });
+  })();
+  var lastRand = -1;
+  $('rand-btn').addEventListener('click', function () {
+    var i; do { i = Math.floor(Math.random() * SAMPLES.length); } while (SAMPLES.length > 1 && i === lastRand);
+    lastRand = i; var x = SAMPLES[i], out = $('rand-out');
+    out.textContent = ''; out.hidden = false; out.appendChild(cardFor(x));
+    $('rand-btn').textContent = '다시 뽑기';
+  });
+  renderList();
+  render();
+  showExample(0);
+})();
+</script>
+
+</body></html>
