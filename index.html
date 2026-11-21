@@ -3,275 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>능력 설정 도우미 (ABILITY GUIDE)</title>
+  <title>능력 설정 도우미 | ABILITY GUIDE</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Pretendard Font -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
-          },
-          colors: {
-            slateBg: '#F8F9FA',
-            brand: {
-              50: '#EEF2FF',
-              100: '#E0E7FF',
-              500: '#6366F1',
-              600: '#4F46E5',
-              700: '#4338CA',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Google Fonts: Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Pretendard', sans-serif;
-      background-color: #F8F9FA;
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #F4F3EF;
+      color: #2D2F34;
+      -webkit-tap-highlight-color: transparent;
     }
-    /* Custom scrollbar */
+    
+    /* Custom scrollbar for better visual harmony */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #F1F5F9;
+      background: #F4F3EF;
     }
     ::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
-      border-radius: 3px;
+      background: #D4D1C7;
+      border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #94A3B8;
+      background: #B5B2A6;
+    }
+
+    /* Grade Badge Styles */
+    .badge-S { background-color: #F3E7E9; color: #8A4B56; border-color: #E6D2D6; }
+    .badge-A { background-color: #F5EDE3; color: #8D5E38; border-color: #E8D9C5; }
+    .badge-B { background-color: #E9EFF4; color: #475D75; border-color: #D4DFE9; }
+    .badge-C { background-color: #EAF2ED; color: #436B55; border-color: #D3E3D9; }
+    .badge-D { background-color: #F0ECF4; color: #66547A; border-color: #DFD7E8; }
+    .badge-E { background-color: #EFECE6; color: #6E6659; border-color: #E0DBD0; }
+    .badge-F { background-color: #ECEEEF; color: #63676E; border-color: #DCDFE3; }
+
+    /* Category Badges */
+    .cat-real { background-color: #ECEFF2; color: #4E5A68; }
+    .cat-fun  { background-color: #F3EFE6; color: #7A6A4F; }
+
+    /* Toast animation */
+    .toast-enter {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    .toast-show {
+      transform: translateY(0);
+      opacity: 1;
     }
   </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-100 selection:text-indigo-700">
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-[#EAEFF4] selection:text-[#2D2F34]">
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-16 opacity-0 transition-all duration-300 ease-in-out pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm font-medium">
-    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-    </svg>
-    <span id="toast-message">클립보드에 복사되었습니다!</span>
-  </div>
-
-  <!-- Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5">
-      <div class="flex flex-col items-center text-center">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-semibold tracking-wide uppercase mb-2">
-          ABILITY GUIDE
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">능력 설정 도우미</h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-lg">
-          견본에서 바로 고르거나, 외부 AI에 붙여넣을 프롬프트로 직접 만들어요.
-        </p>
-      </div>
-
-      <!-- Navigation Tabs -->
-      <div class="flex justify-center mt-6">
-        <div class="bg-slate-100 p-1 rounded-xl flex gap-1 w-full max-w-xs sm:max-w-sm border border-slate-200/80">
-          <button id="tab-btn-browse" onclick="switchTab('browse')" class="flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-150 bg-white text-indigo-600 shadow-sm">
-            견본에서 고르기
-          </button>
-          <button id="tab-btn-create" onclick="switchTab('create')" class="flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-150 text-slate-600 hover:text-slate-900">
-            직접 만들기
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content Area -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
+  <!-- Top Container -->
+  <div class="w-full max-w-[1040px] mx-auto px-4 py-8 sm:py-12 flex-grow">
     
-    <!-- ================= TAB 1: 견본에서 고르기 ================= -->
-    <section id="tab-browse" class="space-y-6">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <span class="inline-block text-xs tracking-widest font-semibold uppercase text-[#8C8F96] mb-1">
+        ABILITY GUIDE
+      </span>
+      <h1 class="text-3xl sm:text-4xl font-bold text-[#2D2F34] tracking-tight mb-2">
+        능력 설정 도우미
+      </h1>
+      <p class="text-sm sm:text-base text-[#666970]">
+        견본에서 바로 고르거나, 외부 AI에 붙여넣을 프롬프트로 직접 만들어요.
+      </p>
+
+      <!-- Segmented Navigation (2 Tabs) -->
+      <div class="mt-6 inline-flex p-1 bg-[#EAE8E1] rounded-2xl border border-[#E5E2DA]">
+        <button id="tab-pick-btn" onclick="switchTab('pick')" 
+                class="px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm bg-[#FAF9F6] text-[#2D2F34]">
+          견본에서 고르기
+        </button>
+        <button id="tab-create-btn" onclick="switchTab('create')" 
+                class="px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-[#666970] hover:text-[#2D2F34]">
+          직접 만들기
+        </button>
+      </div>
+    </header>
+
+    <!-- TAB 1: 견본에서 고르기 -->
+    <main id="tab-pick-content" class="space-y-6">
       
-      <!-- Random Draw Box -->
-      <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white rounded-2xl p-6 shadow-lg border border-indigo-700/50">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-indigo-700/60">
+      <!-- Random Draw Card -->
+      <section class="bg-[#FAF9F6] border border-[#E5E2DA] rounded-2xl p-5 sm:p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 mb-1">
-              무작위 탐색
-            </span>
-            <h2 class="text-lg font-bold">오늘의 이능력 뽑기</h2>
+            <h2 class="text-base font-semibold text-[#2D2F34]">랜덤 능력 뽑기</h2>
+            <p class="text-xs text-[#8C8F96] mt-0.5">무작위로 새로운 능력을 하나 뽑아보세요.</p>
           </div>
-          <button onclick="drawRandomAbility()" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-500 hover:bg-indigo-400 active:scale-95 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-            </svg>
-            랜덤 뽑기
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Filter for Random -->
+            <select id="random-cat-select" onchange="drawRandomAbility()" class="text-xs bg-[#F4F3EF] border border-[#E5E2DA] rounded-xl px-3 py-2 text-[#2D2F34] outline-none focus:border-[#4C5B70]">
+              <option value="all">전체</option>
+              <option value="실전용">실전용만</option>
+              <option value="예능용">예능용만</option>
+            </select>
+            <button onclick="drawRandomAbility()" class="px-4 py-2 bg-[#4C5B70] hover:bg-[#3D4A5C] text-white text-xs font-medium rounded-xl transition-colors shadow-sm active:scale-[0.98]">
+              🎲 뽑기
+            </button>
+          </div>
+        </div>
+
+        <!-- Random Draw Display Box -->
+        <div id="random-result-box" class="mt-4 hidden pt-4 border-t border-[#E5E2DA]">
+          <!-- Random Card dynamic content goes here -->
+        </div>
+      </section>
+
+      <!-- Filter Section -->
+      <section class="bg-[#FAF9F6] border border-[#E5E2DA] rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        <!-- Category Pills -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium text-[#8C8F96] mr-1">분류:</span>
+          <button onclick="setCategoryFilter('all')" id="cat-pill-all" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-medium transition-colors bg-[#4C5B70] text-white">전체</button>
+          <button onclick="setCategoryFilter('실전용')" id="cat-pill-실전용" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">실전용</button>
+          <button onclick="setCategoryFilter('예능용')" id="cat-pill-예능용" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">예능용</button>
+        </div>
+
+        <!-- Grade Pills -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-xs font-medium text-[#8C8F96] mr-1">등급:</span>
+          <button onclick="setGradeFilter('all')" id="grade-pill-all" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#4C5B70] text-white">전체</button>
+          <button onclick="setGradeFilter('S')" id="grade-pill-S" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">S등급</button>
+          <button onclick="setGradeFilter('A')" id="grade-pill-A" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">A등급</button>
+          <button onclick="setGradeFilter('B')" id="grade-pill-B" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">B등급</button>
+          <button onclick="setGradeFilter('C')" id="grade-pill-C" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">C등급</button>
+          <button onclick="setGradeFilter('D')" id="grade-pill-D" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">D등급</button>
+          <button onclick="setGradeFilter('E')" id="grade-pill-E" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">E등급</button>
+          <button onclick="setGradeFilter('F')" id="grade-pill-F" class="grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]">F등급</button>
+        </div>
+
+        <div class="text-right text-xs text-[#8C8F96] pt-1 border-t border-[#F0EEE8]" id="item-count">
+          총 37개
+        </div>
+      </section>
+
+      <!-- Ability Grid -->
+      <section id="ability-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered via JavaScript -->
+      </section>
+    </main>
+
+    <!-- TAB 2: 직접 만들기 -->
+    <main id="tab-create-content" class="hidden space-y-6">
+      
+      <!-- Step 1 Card -->
+      <section class="bg-[#FAF9F6] border border-[#E5E2DA] rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
+        <div class="border-b border-[#E5E2DA] pb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#4C5B70]">STEP 1</span>
+          <h2 class="text-lg font-bold text-[#2D2F34]">방식 선택 & 내용 입력</h2>
+        </div>
+
+        <!-- Mode Toggles -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button id="mode-profile-btn" onclick="setCreateMode('profile')"
+                  class="p-4 rounded-xl border text-left transition-all duration-200 border-[#4C5B70] bg-[#EAEFF4] text-[#2D2F34]">
+            <div class="font-semibold text-sm">👤 유저 프로필로 만들기</div>
+            <div class="text-xs text-[#666970] mt-1">캐릭터의 성격, 배경, 외형을 바탕으로 능력을 생성합니다.</div>
+          </button>
+
+          <button id="mode-concept-btn" onclick="setCreateMode('concept')"
+                  class="p-4 rounded-xl border text-left transition-all duration-200 border-[#E5E2DA] bg-[#FAF9F6] text-[#666970] hover:border-[#C4C0B6]">
+            <div class="font-semibold text-sm">✨ 컨셉·키워드로 만들기</div>
+            <div class="text-xs text-[#666970] mt-1">원하는 핵심 키워드나 전투 스타일로 능력을 생성합니다.</div>
           </button>
         </div>
 
-        <!-- Draw Result Display Area -->
-        <div id="random-result-container" class="mt-4 hidden">
-          <div id="random-card" class="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/15 text-slate-100 space-y-3">
-            <!-- Dynamic Random Content -->
+        <!-- Reference Ability Banner (Show only when selected) -->
+        <div id="ref-ability-banner" class="hidden bg-[#F0EEE8] border border-[#E2DFD7] rounded-xl p-3.5 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-medium text-[#8C8F96]">📌 참고할 기존 능력:</span>
+            <span id="ref-badge-grade" class="px-2 py-0.5 rounded text-[11px] font-medium border">S등급</span>
+            <span id="ref-name-type" class="font-semibold text-[#2D2F34]">창공 재단사 〡 공간계</span>
           </div>
-        </div>
-      </div>
-
-      <!-- Filters & Stats -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          
-          <!-- Category Filter Pills -->
-          <div class="space-y-1.5 w-full md:w-auto">
-            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">카테고리</div>
-            <div class="flex flex-wrap gap-1.5" id="category-filters">
-              <button onclick="setCategoryFilter('all')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm" data-cat="all">전체</button>
-              <button onclick="setCategoryFilter('실전용')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="실전용">실전용</button>
-              <button onclick="setCategoryFilter('예능용')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="예능용">예능용</button>
-            </div>
-          </div>
-
-          <!-- Grade Filter Pills -->
-          <div class="space-y-1.5 w-full md:w-auto">
-            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">등급</div>
-            <div class="flex flex-wrap gap-1.5" id="grade-filters">
-              <button onclick="setGradeFilter('all')" class="grade-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm" data-grade="all">전체</button>
-              <button onclick="setGradeFilter('S')" class="grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-grade="S">S</button>
-              <button onclick="setGradeFilter('A')" class="grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-grade="A">A</button>
-              <button onclick="setGradeFilter('B')" class="grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-grade="B">B</button>
-              <button onclick="setGradeFilter('C')" class="grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-grade="C">C</button>
-              <button onclick="setGradeFilter('D')" class="grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-grade="D">D</button>
-              <button onclick="setGradeFilter('E')" class="grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-grade="E">E</button>
-              <button onclick="setGradeFilter('F')" class="grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-grade="F">F</button>
-            </div>
-          </div>
+          <button onclick="clearReferenceAbility()" class="text-[#8C8F96] hover:text-[#2D2F34] text-base leading-none px-1" title="참고 능력 제거">
+            ✕
+          </button>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-          <span>검색된 이능력: <strong id="ability-count" class="text-indigo-600 font-bold">37</strong>개</span>
-          <span class="text-slate-400">카드를 선택해 복사하거나 AI 프롬프트로 변형하세요</span>
-        </div>
-      </div>
-
-      <!-- Ability Cards Grid -->
-      <div id="abilities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Rendered by JavaScript -->
-      </div>
-    </section>
-
-
-    <!-- ================= TAB 2: 직접 만들기 ================= -->
-    <section id="tab-create" class="space-y-6 hidden">
-      
-      <!-- STEP 1: 방식 선택 & 내용 입력 -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-          <div class="flex items-center gap-3">
-            <span class="w-7 h-7 rounded-full bg-indigo-600 text-white font-extrabold text-xs flex items-center justify-center">1</span>
-            <div>
-              <h2 class="text-base font-bold text-slate-900">방식 선택 & 내용 입력</h2>
-              <p class="text-xs text-slate-500">캐릭터 프로필이나 원하는 컨셉 키워드를 작성하세요.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Reference Ability Active Chip (if selected) -->
-        <div id="ref-ability-chip" class="hidden">
-          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3.5 flex items-center justify-between text-xs sm:text-sm">
-            <div class="flex items-center gap-2 overflow-hidden">
-              <span class="px-2 py-0.5 rounded bg-indigo-600 text-white font-bold text-xs shrink-0">참고 견본 적용 중</span>
-              <span id="ref-ability-name" class="font-bold text-indigo-950 truncate">창공 재단사 (공간계)</span>
-            </div>
-            <button onclick="clearReferenceAbility()" class="text-indigo-500 hover:text-indigo-800 p-1 hover:bg-indigo-100 rounded-lg transition-all shrink-0 flex items-center gap-1 text-xs font-semibold">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-              견본 해제
-            </button>
-          </div>
-        </div>
-
-        <!-- Mode Toggle Radio Pills -->
-        <div class="space-y-2">
-          <label class="block text-xs font-bold text-slate-500 uppercase">입력 방식</label>
-          <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 w-full sm:w-auto">
-            <button id="mode-btn-profile" onclick="setInputMode('profile')" class="flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm">
-              프로필 붙여넣기
-            </button>
-            <button id="mode-btn-keyword" onclick="setInputMode('keyword')" class="flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900">
-              키워드·컨셉 입력
-            </button>
-          </div>
-        </div>
-
-        <!-- Input Textarea -->
-        <div class="space-y-2">
-          <label id="input-label" for="user-input" class="block text-xs font-bold text-slate-500 uppercase">
-            캐릭터 프로필 입력
+        <!-- Textarea -->
+        <div>
+          <label for="user-input-text" class="block text-xs font-medium text-[#666970] mb-2" id="input-label">
+            캐릭터 프로필 또는 키워드 입력
           </label>
-          <textarea id="user-input" rows="4" oninput="updatePromptPreview()" class="w-full rounded-xl border border-slate-300 p-3.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" placeholder="예: 17세 고등학생, 소심하지만 정의감이 강함. 주로 밤에 활동하는 어둠 속의 조력자 역할..."></textarea>
-          <p class="text-xs text-slate-400">비워둘 경우 '(자유롭고 창의적인 캐릭터 설정)'으로 자동 입력됩니다.</p>
+          <textarea id="user-input-text" oninput="onPromptInputChanged()" rows="4"
+                    class="w-full bg-[#F4F3EF] border border-[#E5E2DA] rounded-xl p-3.5 text-sm text-[#2D2F34] placeholder-[#8C8F96] focus:outline-none focus:border-[#4C5B70] transition-colors resize-y"
+                    placeholder="캐릭터 프로필(성격, 외형, 배경 등)을 그대로 붙여넣어 주세요."></textarea>
         </div>
-      </div>
+      </section>
 
-      <!-- STEP 2: 완성된 프롬프트 복사 & AI 열기 -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-          <div class="flex items-center gap-3">
-            <span class="w-7 h-7 rounded-full bg-indigo-600 text-white font-extrabold text-xs flex items-center justify-center">2</span>
-            <div>
-              <h2 class="text-base font-bold text-slate-900">완성된 프롬프트 복사 & AI 열기</h2>
-              <p class="text-xs text-slate-500">아래 완성된 프롬프트를 복사하여 원하는 AI 서비스에 붙여넣으세요.</p>
-            </div>
+      <!-- Step 2 Card -->
+      <section class="bg-[#FAF9F6] border border-[#E5E2DA] rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+        <div class="border-b border-[#E5E2DA] pb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#4C5B70]">STEP 2</span>
+          <h2 class="text-lg font-bold text-[#2D2F34]">완성된 프롬프트 복사 & AI 열기</h2>
+        </div>
+
+        <!-- Formatted Prompt Preview -->
+        <div class="relative">
+          <div class="text-xs text-[#8C8F96] mb-1.5 flex justify-between items-center">
+            <span>생성된 AI 프롬프트 (자동 갱신)</span>
           </div>
-        </div>
-
-        <!-- Live Prompt Output Area -->
-        <div class="relative group">
-          <pre id="prompt-preview" class="w-full bg-slate-900 text-slate-200 p-4 sm:p-5 rounded-xl text-xs sm:text-sm font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed border border-slate-800 select-all"></pre>
+          <pre id="prompt-preview" class="w-full bg-[#F0EEE8] border border-[#E2DFD7] rounded-xl p-4 text-xs sm:text-sm text-[#33363C] whitespace-pre-wrap break-words font-mono overflow-x-auto leading-relaxed max-h-[400px] overflow-y-auto"></pre>
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
-          <button onclick="copyPrompt()" class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-98 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
-            </svg>
+        <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <button onclick="copyPromptText()" class="w-full sm:w-auto px-6 py-3 bg-[#4C5B70] hover:bg-[#3D4A5C] text-white text-sm font-semibold rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2 active:scale-[0.98]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
             프롬프트 복사하기
           </button>
 
-          <!-- Quick AI Links -->
-          <div class="flex items-center justify-center gap-2">
-            <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-xs transition-all flex items-center gap-1 border border-slate-200">
-              Claude 열기 ↗
-            </a>
-            <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-xs transition-all flex items-center gap-1 border border-slate-200">
-              ChatGPT 열기 ↗
-            </a>
-            <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-xs transition-all flex items-center gap-1 border border-slate-200">
-              Gemini 열기 ↗
-            </a>
+          <!-- External AI Links -->
+          <div class="flex items-center justify-center gap-2 flex-wrap text-xs text-[#666970]">
+            <span class="text-[#8C8F96]">외부 AI 이동:</span>
+            <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-[#F4F3EF] hover:bg-[#EAE8E1] border border-[#E5E2DA] rounded-lg transition-colors font-medium">Claude ↗</a>
+            <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-[#F4F3EF] hover:bg-[#EAE8E1] border border-[#E5E2DA] rounded-lg transition-colors font-medium">ChatGPT ↗</a>
+            <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-[#F4F3EF] hover:bg-[#EAE8E1] border border-[#E5E2DA] rounded-lg transition-colors font-medium">Gemini ↗</a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
+    </main>
+
+  </div>
 
   <!-- Footer -->
-  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
-    <div class="max-w-6xl mx-auto px-4">
-      이 세계의 삼권분립은 사이가 나쁘다 · ABILITY GUIDE
-    </div>
+  <footer class="w-full border-t border-[#E5E2DA] py-6 text-center text-xs text-[#8C8F96] mt-12 bg-[#FAF9F6]">
+    이 세계의 삼권분립은 사이가 나쁘다 · ABILITY GUIDE
   </footer>
 
-  <!-- JavaScript Application Code -->
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none toast-enter">
+    <div class="bg-[#2D2F34] text-[#FAF9F6] text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-lg border border-[#33363C] flex items-center gap-2">
+      <span class="text-emerald-400">✓</span>
+      <span id="toast-message">복사되었어요!</span>
+    </div>
+  </div>
+
+  <!-- JS Logic & Complete Dataset -->
   <script>
-    // ================= DATA STORE (ALL 37 ABILITIES) =================
+    // Complete Dataset of 37 Abilities
     const ABILITIES_DATA = [
-      // --- 실전용 (21개) ---
+      // 실전용 (21)
       {
         id: 1, category: "실전용", grade: "S", name: "창공 재단사", type: "공간계",
         skills: [
@@ -462,7 +443,7 @@
         constraint: "실은 가위나 칼날에 쉽게 끊어지며, 한 번에 10m 이상 길게 뽑아낼 수 없다."
       },
 
-      // --- 예능용 (16개) ---
+      // 예능용 (16)
       {
         id: 22, category: "예능용", grade: "B", name: "골목대장", type: "규칙계",
         skills: [
@@ -609,354 +590,325 @@
       }
     ];
 
-    // ================= STATE MANAGEMENT =================
-    let currentCategory = 'all';
-    let currentGrade = 'all';
-    let selectedRefAbility = null; // Reference ability for Tab 2
-    let inputMode = 'profile'; // 'profile' or 'keyword'
+    // State Variables
+    let currentTab = 'pick';
+    let filterCategory = 'all';
+    let filterGrade = 'all';
+    let referenceAbility = null;
+    let createMode = 'profile';
 
-    // Grade Color Helper
-    function getGradeBadgeStyle(grade) {
-      switch (grade) {
-        case 'S': return 'bg-amber-100 text-amber-800 border-amber-300';
-        case 'A': return 'bg-rose-100 text-rose-800 border-rose-300';
-        case 'B': return 'bg-indigo-100 text-indigo-800 border-indigo-300';
-        case 'C': return 'bg-emerald-100 text-emerald-800 border-emerald-300';
-        case 'D': return 'bg-sky-100 text-sky-800 border-sky-300';
-        case 'E': return 'bg-slate-100 text-slate-700 border-slate-300';
-        case 'F': return 'bg-slate-200 text-slate-600 border-slate-400';
-        default: return 'bg-slate-100 text-slate-700 border-slate-300';
-      }
-    }
-
-    // Format text for copying
-    function formatAbilityText(ability) {
-      return `✦등급: ${ability.grade}등급\n` +
-        `✦능력: ${ability.name}〡${ability.type}\n` +
-        `✦스킬:\n` +
-        `${ability.skills[0].name}〡${ability.skills[0].desc}\n` +
-        `${ability.skills[1].name}〡${ability.skills[1].desc}\n` +
-        `${ability.skills[2].name}〡${ability.skills[2].desc}\n` +
-        `✦제약: ${ability.constraint}`;
-    }
-
-    // Toast Notification
+    // Helper: Toast message
     function showToast(msg) {
       const toast = document.getElementById('toast');
       const toastMsg = document.getElementById('toast-message');
       toastMsg.textContent = msg;
-      toast.classList.remove('translate-y-16', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
+      toast.classList.remove('toast-enter');
+      toast.classList.add('toast-show');
+      
       setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-16', 'opacity-0');
-      }, 2200);
+        toast.classList.remove('toast-show');
+        toast.classList.add('toast-enter');
+      }, 2500);
     }
 
-    // Copy to Clipboard (Fallback compatible)
-    function copyToClipboard(text, successMsg = "클립보드에 복사되었습니다!") {
+    // Helper: Clipboard copy fallback
+    function copyToClipboard(text, successMsg) {
       if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(() => fallbackCopy(text, successMsg));
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(successMsg);
+        }).catch(() => {
+          fallbackCopyText(text, successMsg);
+        });
       } else {
-        fallbackCopy(text, successMsg);
+        fallbackCopyText(text, successMsg);
       }
     }
 
-    function fallbackCopy(text, successMsg) {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
+    function fallbackCopyText(text, successMsg) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
       try {
         document.execCommand('copy');
         showToast(successMsg);
       } catch (err) {
-        showToast("복사 실패. 수동으로 선택해 복사해 주세요.");
+        showToast("복사에 실패했습니다.");
       }
-      document.body.removeChild(textarea);
+      document.body.removeChild(textArea);
     }
 
-    // ================= TAB 1 RENDER LOGIC =================
-    function renderAbilities() {
-      const container = document.getElementById('abilities-grid');
-      const countEl = document.getElementById('ability-count');
+    // Tab Switching
+    function switchTab(tab) {
+      currentTab = tab;
+      const pickBtn = document.getElementById('tab-pick-btn');
+      const createBtn = document.getElementById('tab-create-btn');
+      const pickContent = document.getElementById('tab-pick-content');
+      const createContent = document.getElementById('tab-create-content');
 
-      const filtered = ABILITIES_DATA.filter(item => {
-        const matchCat = currentCategory === 'all' || item.category === currentCategory;
-        const matchGrade = currentGrade === 'all' || item.grade === currentGrade;
-        return matchCat && matchGrade;
-      });
-
-      countEl.textContent = filtered.length;
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full py-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
-            조건에 만족하는 이능력이 없습니다.
-          </div>
-        `;
-        return;
+      if (tab === 'pick') {
+        pickBtn.className = "px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm bg-[#FAF9F6] text-[#2D2F34]";
+        createBtn.className = "px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-[#666970] hover:text-[#2D2F34]";
+        pickContent.classList.remove('hidden');
+        createContent.classList.add('hidden');
+      } else {
+        createBtn.className = "px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 shadow-sm bg-[#FAF9F6] text-[#2D2F34]";
+        pickBtn.className = "px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-[#666970] hover:text-[#2D2F34]";
+        createContent.classList.remove('hidden');
+        pickContent.classList.add('hidden');
+        updatePromptPreview();
       }
+    }
 
-      container.innerHTML = filtered.map(item => `
-        <div class="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md border border-slate-200 flex flex-col justify-between transition-all duration-200">
+    // Format single ability string for copying
+    function formatAbilityCopyText(item) {
+      return `✦등급: ${item.grade}
+✦능력: ${item.name}〡${item.type}
+✦스킬:
+${item.skills[0].name}〡${item.skills[0].desc}
+${item.skills[1].name}〡${item.skills[1].desc}
+${item.skills[2].name}〡${item.skills[2].desc}
+✦제약: ${item.constraint}`;
+    }
+
+    // Build Ability Card HTML
+    function createAbilityCardHTML(item) {
+      const catClass = item.category === '실전용' ? 'cat-real' : 'cat-fun';
+      return `
+        <article class="bg-[#FAF9F6] border border-[#E5E2DA] rounded-2xl p-5 shadow-sm hover:border-[#D4D1C7] transition-all flex flex-col justify-between space-y-4">
           <div class="space-y-3">
-            <!-- Header Badges -->
-            <div class="flex items-center justify-between gap-2">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${item.category === '실전용' ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'bg-pink-50 text-pink-700 border border-pink-100'}">
-                ${item.category}
-              </span>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-black border ${getGradeBadgeStyle(item.grade)}">
+            <!-- Top Badges -->
+            <div class="flex items-center gap-2">
+              <span class="badge-${item.grade} px-2.5 py-0.5 rounded-lg text-xs font-bold border">
                 ${item.grade}등급
               </span>
+              <span class="${catClass} px-2.5 py-0.5 rounded-lg text-xs font-medium">
+                ${item.category}
+              </span>
             </div>
 
-            <!-- Title & Type -->
-            <div>
-              <h3 class="text-lg font-extrabold text-slate-900 leading-snug">${item.name} <span class="text-xs font-semibold text-slate-400 ml-1">〡 ${item.type}</span></h3>
-            </div>
+            <!-- Title -->
+            <h3 class="text-lg font-bold text-[#2D2F34] flex items-center gap-1.5 flex-wrap">
+              <span>${item.name}</span>
+              <span class="text-[#8C8F96] font-normal text-sm">〡</span>
+              <span class="text-sm font-normal text-[#666970]">${item.type}</span>
+            </h3>
 
             <!-- Skills List -->
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5 text-xs text-slate-700">
+            <div class="space-y-1.5 pt-1 text-xs sm:text-sm text-[#2D2F34]">
               ${item.skills.map(s => `
-                <div class="leading-relaxed">
-                  <strong class="text-slate-900 font-bold">${s.name}</strong> <span class="text-slate-400">〡</span> ${s.desc}
+                <div class="flex items-start gap-1">
+                  <span class="font-bold text-[#2D2F34] shrink-0">${s.name}</span>
+                  <span class="text-[#8C8F96] shrink-0">〡</span>
+                  <span class="text-[#666970]">${s.desc}</span>
                 </div>
               `).join('')}
             </div>
 
-            <!-- Constraint -->
-            <div class="text-xs text-slate-500 bg-amber-50/60 p-2.5 rounded-xl border border-amber-100/80 leading-relaxed">
-              <strong class="text-amber-900 font-bold">제약:</strong> ${item.constraint}
+            <!-- Constraint Box -->
+            <div class="bg-[#F0EEE8] border border-[#E2DFD7] rounded-xl p-3 text-xs text-[#666970] mt-2">
+              <span class="font-bold text-[#4C5B70] block mb-0.5">제약</span>
+              <p class="leading-relaxed">${item.constraint}</p>
             </div>
           </div>
 
           <!-- Card Actions -->
-          <div class="flex items-center gap-2 pt-4 mt-4 border-t border-slate-100">
-            <button onclick="copyAbilityById(${item.id})" class="flex-1 py-2 px-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition-all text-center">
-              복사하기
+          <div class="pt-2 border-t border-[#F0EEE8] flex items-center justify-between gap-2">
+            <button onclick="copySingleAbility(${item.id})" class="px-3 py-1.5 bg-[#F4F3EF] hover:bg-[#EAE8E1] text-[#2D2F34] border border-[#E5E2DA] rounded-xl text-xs font-medium transition-colors">
+              📋 복사하기
             </button>
-            <button onclick="useAsReference(${item.id})" class="flex-1 py-2 px-3 bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-700 rounded-xl text-xs font-bold transition-all text-center">
+            <button onclick="useAsReference(${item.id})" class="px-3 py-1.5 bg-[#EAEFF4] hover:bg-[#D8E3ED] text-[#4C5B70] rounded-xl text-xs font-medium transition-colors">
               변형해서 만들기 →
             </button>
           </div>
-        </div>
-      `).join('');
+        </article>
+      `;
     }
 
-    function setCategoryFilter(cat) {
-      currentCategory = cat;
-      document.querySelectorAll('.cat-pill').forEach(btn => {
-        if (btn.dataset.cat === cat) {
-          btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm';
-        } else {
-          btn.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200';
-        }
-      });
-      renderAbilities();
-    }
-
-    function setGradeFilter(grade) {
-      currentGrade = grade;
-      document.querySelectorAll('.grade-pill').forEach(btn => {
-        if (btn.dataset.grade === grade) {
-          btn.className = 'grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm';
-        } else {
-          btn.className = 'grade-pill px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200';
-        }
-      });
-      renderAbilities();
-    }
-
-    function copyAbilityById(id) {
+    // Copy single ability from card
+    function copySingleAbility(id) {
       const item = ABILITIES_DATA.find(a => a.id === id);
       if (item) {
-        copyToClipboard(formatAbilityText(item), `'${item.name}' 양식이 복사되었습니다!`);
+        copyToClipboard(formatAbilityCopyText(item), "복사되었어요! 유저 노트에 붙여넣어 주세요.");
+      }
+    }
+
+    // Set reference ability & switch to Tab 2
+    function useAsReference(id) {
+      const item = ABILITIES_DATA.find(a => a.id === id);
+      if (item) {
+        referenceAbility = item;
+        updateReferenceBanner();
+        switchTab('create');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function clearReferenceAbility() {
+      referenceAbility = null;
+      updateReferenceBanner();
+      updatePromptPreview();
+    }
+
+    function updateReferenceBanner() {
+      const banner = document.getElementById('ref-ability-banner');
+      if (referenceAbility) {
+        banner.classList.remove('hidden');
+        const badge = document.getElementById('ref-badge-grade');
+        badge.className = `badge-${referenceAbility.grade} px-2 py-0.5 rounded text-[11px] font-medium border`;
+        badge.textContent = `${referenceAbility.grade}등급`;
+
+        const nameType = document.getElementById('ref-name-type');
+        nameType.textContent = `${referenceAbility.name} 〡 ${referenceAbility.type}`;
+      } else {
+        banner.classList.add('hidden');
       }
     }
 
     // Random Draw Logic
     function drawRandomAbility() {
-      // Pick from current filtered list or full list
-      const filtered = ABILITIES_DATA.filter(item => {
-        const matchCat = currentCategory === 'all' || item.category === currentCategory;
-        const matchGrade = currentGrade === 'all' || item.grade === currentGrade;
-        return matchCat && matchGrade;
+      const catSelect = document.getElementById('random-cat-select').value;
+      let pool = ABILITIES_DATA;
+      if (catSelect !== 'all') {
+        pool = ABILITIES_DATA.filter(a => a.category === catSelect);
+      }
+      
+      const randomItem = pool[Math.floor(Math.random() * pool.length)];
+      const resultBox = document.getElementById('random-result-box');
+      resultBox.classList.remove('hidden');
+      resultBox.innerHTML = createAbilityCardHTML(randomItem);
+    }
+
+    // Filter Logic for Grid
+    function setCategoryFilter(cat) {
+      filterCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        btn.className = "cat-pill px-3 py-1.5 rounded-xl text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]";
       });
+      document.getElementById(`cat-pill-${cat}`).className = "cat-pill px-3 py-1.5 rounded-xl text-xs font-medium transition-colors bg-[#4C5B70] text-white";
+      renderGrid();
+    }
 
-      const pool = filtered.length > 0 ? filtered : ABILITIES_DATA;
-      const picked = pool[Math.floor(Math.random() * pool.length)];
+    function setGradeFilter(grade) {
+      filterGrade = grade;
+      document.querySelectorAll('.grade-pill').forEach(btn => {
+        btn.className = "grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#F4F3EF] text-[#666970] hover:bg-[#EAE8E1]";
+      });
+      document.getElementById(`grade-pill-${grade}`).className = "grade-pill px-2.5 py-1 rounded-lg text-xs font-medium transition-colors bg-[#4C5B70] text-white";
+      renderGrid();
+    }
 
-      const container = document.getElementById('random-result-container');
-      const card = document.getElementById('random-card');
+    function renderGrid() {
+      const grid = document.getElementById('ability-grid');
+      let filtered = ABILITIES_DATA;
 
-      card.innerHTML = `
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-xs font-bold ${picked.category === '실전용' ? 'bg-indigo-500/40 text-indigo-200' : 'bg-pink-500/40 text-pink-200'}">${picked.category}</span>
-            <span class="px-2 py-0.5 rounded text-xs font-black bg-amber-400 text-slate-900">${picked.grade}등급</span>
+      if (filterCategory !== 'all') {
+        filtered = filtered.filter(a => a.category === filterCategory);
+      }
+      if (filterGrade !== 'all') {
+        filtered = filtered.filter(a => a.grade === filterGrade);
+      }
+
+      document.getElementById('item-count').textContent = `총 ${filtered.length}개`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-[#8C8F96] bg-[#FAF9F6] border border-[#E5E2DA] rounded-2xl text-sm">
+            해당 조건에 일치하는 능력이 없습니다.
           </div>
-          <span class="text-xs text-indigo-200/70">무작위 당첨</span>
-        </div>
-        <div>
-          <h3 class="text-xl font-black text-white">${picked.name} <span class="text-sm font-normal text-indigo-200">〡 ${picked.type}</span></h3>
-        </div>
-        <div class="bg-black/20 p-3 rounded-lg text-xs space-y-1 text-indigo-100 border border-white/10">
-          ${picked.skills.map(s => `<div><strong>${s.name}</strong> 〡 ${s.desc}</div>`).join('')}
-        </div>
-        <div class="text-xs text-amber-200 bg-amber-950/30 p-2.5 rounded-lg border border-amber-500/20">
-          <strong>제약:</strong> ${picked.constraint}
-        </div>
-        <div class="flex items-center gap-2 pt-2">
-          <button onclick="copyAbilityById(${picked.id})" class="flex-1 py-2 bg-white/15 hover:bg-white/25 active:scale-98 text-white rounded-lg text-xs font-bold transition-all">
-            복사하기
-          </button>
-          <button onclick="useAsReference(${picked.id})" class="flex-1 py-2 bg-indigo-500 hover:bg-indigo-400 active:scale-98 text-white rounded-lg text-xs font-bold transition-all">
-            변형해서 만들기 →
-          </button>
-        </div>
-      `;
-
-      container.classList.remove('hidden');
-    }
-
-    // Switch to Tab 2 and Set Reference
-    function useAsReference(id) {
-      const item = ABILITIES_DATA.find(a => a.id === id);
-      if (!item) return;
-
-      selectedRefAbility = item;
-      switchTab('create');
-      updateRefChipDisplay();
-      updatePromptPreview();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function clearReferenceAbility() {
-      selectedRefAbility = null;
-      updateRefChipDisplay();
-      updatePromptPreview();
-    }
-
-    function updateRefChipDisplay() {
-      const chip = document.getElementById('ref-ability-chip');
-      const nameEl = document.getElementById('ref-ability-name');
-
-      if (selectedRefAbility) {
-        nameEl.textContent = `${selectedRefAbility.name} (${selectedRefAbility.type}) - ${selectedRefAbility.grade}등급`;
-        chip.classList.remove('hidden');
-      } else {
-        chip.classList.add('hidden');
+        `;
+        return;
       }
+
+      grid.innerHTML = filtered.map(item => createAbilityCardHTML(item)).join('');
     }
 
-    // ================= TAB SWITCHING =================
-    function switchTab(tab) {
-      const btnBrowse = document.getElementById('tab-btn-browse');
-      const btnCreate = document.getElementById('tab-btn-create');
-      const viewBrowse = document.getElementById('tab-browse');
-      const viewCreate = document.getElementById('tab-create');
-
-      if (tab === 'browse') {
-        btnBrowse.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-150 bg-white text-indigo-600 shadow-sm';
-        btnCreate.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-150 text-slate-600 hover:text-slate-900';
-        viewBrowse.classList.remove('hidden');
-        viewCreate.classList.add('hidden');
-      } else {
-        btnCreate.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-150 bg-white text-indigo-600 shadow-sm';
-        btnBrowse.className = 'flex-1 py-2 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-150 text-slate-600 hover:text-slate-900';
-        viewCreate.classList.remove('hidden');
-        viewBrowse.classList.add('hidden');
-        updatePromptPreview();
-      }
-    }
-
-    // ================= TAB 2 LOGIC (PROMPT BUILDER) =================
-    function setInputMode(mode) {
-      inputMode = mode;
-      const btnProfile = document.getElementById('mode-btn-profile');
-      const btnKeyword = document.getElementById('mode-btn-keyword');
-      const label = document.getElementById('input-label');
-      const textarea = document.getElementById('user-input');
+    // Tab 2 Mode Switch
+    function setCreateMode(mode) {
+      createMode = mode;
+      const profileBtn = document.getElementById('mode-profile-btn');
+      const conceptBtn = document.getElementById('mode-concept-btn');
+      const inputLabel = document.getElementById('input-label');
+      const textarea = document.getElementById('user-input-text');
 
       if (mode === 'profile') {
-        btnProfile.className = 'flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm';
-        btnKeyword.className = 'flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900';
-        label.textContent = '캐릭터 프로필 입력';
-        textarea.placeholder = '예: 17세 고등학생, 소심하지만 정의감이 강함. 주로 밤에 활동하는 어둠 속의 조력자 역할...';
+        profileBtn.className = "p-4 rounded-xl border text-left transition-all duration-200 border-[#4C5B70] bg-[#EAEFF4] text-[#2D2F34]";
+        conceptBtn.className = "p-4 rounded-xl border text-left transition-all duration-200 border-[#E5E2DA] bg-[#FAF9F6] text-[#666970] hover:border-[#C4C0B6]";
+        inputLabel.textContent = "캐릭터 프로필 입력";
+        textarea.placeholder = "캐릭터 프로필(성격, 외형, 배경 등)을 그대로 붙여넣어 주세요.";
       } else {
-        btnKeyword.className = 'flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all bg-white text-indigo-600 shadow-sm';
-        btnProfile.className = 'flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all text-slate-600 hover:text-slate-900';
-        label.textContent = '키워드·컨셉 입력';
-        textarea.placeholder = '예: 시계, 시간 정지, 어둠, 까칠한 천재 대마법사...';
+        conceptBtn.className = "p-4 rounded-xl border text-left transition-all duration-200 border-[#4C5B70] bg-[#EAEFF4] text-[#2D2F34]";
+        profileBtn.className = "p-4 rounded-xl border text-left transition-all duration-200 border-[#E5E2DA] bg-[#FAF9F6] text-[#666970] hover:border-[#C4C0B6]";
+        inputLabel.textContent = "원하는 컨셉 또는 키워드 입력";
+        textarea.placeholder = "원하는 분위기, 키워드, 전투 스타일 등을 자유롭게 적어 주세요. (예: 냉철한 암살자, 그림자와 실을 다루는 능력)";
       }
 
       updatePromptPreview();
     }
 
-    // Dynamic Prompt Builder Function
-    function buildPromptText() {
-      const rawInput = document.getElementById('user-input').value.trim();
-      const defaultText = '(자유롭고 창의적인 캐릭터 설정)';
-      const infoText = rawInput || defaultText;
-      const keyName = inputMode === 'profile' ? '캐릭터 프로필' : '컨셉/키워드';
-
-      let prompt = `아래 정보에 어울리는 이능력 설정을 1개 만들어 줘.\n` +
-        `반드시 아래 [출력 양식]과 [출력 예시]의 기호(✦, 〡) 및 글자 수 제한을 정확히 지켜서 출력하고, 다른 부가 설명은 생략해 줘.\n\n` +
-        `[입력 정보]\n` +
-        `- ${keyName}: ${infoText}`;
-
-      // If a Reference Ability is Selected, Append exact full ability object!
-      if (selectedRefAbility) {
-        prompt += `\n\n` +
-          `[참고할 기존 능력 (이 능력의 분위기와 메커니즘을 변형·응용할 것)]\n` +
-          `✦등급: ${selectedRefAbility.grade}등급\n` +
-          `✦능력: ${selectedRefAbility.name}〡${selectedRefAbility.type}\n` +
-          `✦스킬:\n` +
-          `${selectedRefAbility.skills[0].name}〡${selectedRefAbility.skills[0].desc}\n` +
-          `${selectedRefAbility.skills[1].name}〡${selectedRefAbility.skills[1].desc}\n` +
-          `${selectedRefAbility.skills[2].name}〡${selectedRefAbility.skills[2].desc}\n` +
-          `✦제약: ${selectedRefAbility.constraint}`;
-      }
-
-      prompt += `\n\n` +
-        `[출력 양식]\n` +
-        `✦등급: F·E·D·C·B·A·S 중 택1\n` +
-        `✦능력: {10자 이내 단어·명사형}〡{계열명}\n` +
-        `✦스킬:\n` +
-        `{스킬명}〡{설명 30자 이내}\n` +
-        `{스킬명}〡{설명 30자 이내}\n` +
-        `{스킬명}〡{설명 30자 이내}\n` +
-        `✦제약: {능력 사용시 필수 제약 60자 이내}\n\n` +
-        `[출력 예시]\n` +
-        `✦등급: A\n` +
-        `✦능력: 빛의 굴절〡광학계\n` +
-        `✦스킬:\n` +
-        `신기루〡빛을 꺾어 자신이나 사물의 위치를 다르게 보이게 함\n` +
-        `초점 집속〡주변 빛을 한 점에 모아 고열의 광선으로 발사함\n` +
-        `암전 장막〡특정 구역의 빛을 외부로 튕겨내어 완전한 암흑을 만듦\n` +
-        `✦제약: 빛이 전혀 없는 완전한 어둠 속에서는 발동 불가하며, 과도하게 사용하면 일시적 시력 저하가 온다.`;
-
-      return prompt;
+    function onPromptInputChanged() {
+      updatePromptPreview();
     }
 
+    // Dynamically Generate Step 2 Prompt
     function updatePromptPreview() {
-      const previewEl = document.getElementById('prompt-preview');
-      previewEl.textContent = buildPromptText();
+      const inputText = document.getElementById('user-input-text').value.trim();
+      const inputLabelName = createMode === 'profile' ? '유저 프로필' : '컨셉/키워드';
+      const actualInput = inputText || '(자유롭고 창의적인 캐릭터 설정)';
+
+      let refSection = '';
+      if (referenceAbility) {
+        refSection = `\n[참고할 기존 능력 (이 능력의 분위기와 메커니즘을 변형·응용할 것)]
+✦등급: ${referenceAbility.grade}
+✦능력: ${referenceAbility.name}〡${referenceAbility.type}
+✦스킬:
+${referenceAbility.skills[0].name}〡${referenceAbility.skills[0].desc}
+${referenceAbility.skills[1].name}〡${referenceAbility.skills[1].desc}
+${referenceAbility.skills[2].name}〡${referenceAbility.skills[2].desc}
+✦제약: ${referenceAbility.constraint}\n`;
+      }
+
+      const promptTemplate = `아래 정보에 어울리는 이능력 설정을 1개 만들어 줘.
+반드시 아래 [출력 양식]과 [출력 예시]의 기호(✦, 〡) 및 글자 수 제한을 정확히 지켜서 출력하고, 다른 부가 설명은 생략해 줘.
+
+[입력 정보]
+- ${inputLabelName}: ${actualInput}
+${refSection}
+[출력 양식]
+✦등급: F·E·D·C·B·A·S 중 택1
+✦능력: {10자 이내 단어·명사형}〡{계열명}
+✦스킬:
+{스킬명}〡{설명 30자 이내}
+{스킬명}〡{설명 30자 이내}
+{스킬명}〡{설명 30자 이내}
+✦제약: {능력 사용시 필수 제약 60자 이내}
+
+[출력 예시]
+✦등급: A
+✦능력: 빛의 굴절〡광학계
+✦스킬:
+신기루〡빛을 꺾어 자신이나 사물의 위치를 다르게 보이게 함
+초점 집속〡주변 빛을 한 점에 모아 고열의 광선으로 발사함
+암전 장막〡특정 구역의 빛을 외부로 튕겨내어 완전한 암흑을 만듦
+✦제약: 빛이 전혀 없는 완전한 어둠 속에서는 발동 불가하며, 과도하게 사용하면 일시적 시력 저하가 온다.`;
+
+      document.getElementById('prompt-preview').textContent = promptTemplate;
     }
 
-    function copyPrompt() {
-      const promptText = buildPromptText();
-      copyToClipboard(promptText, "완성된 프롬프트가 복사되었습니다!");
+    function copyPromptText() {
+      const promptText = document.getElementById('prompt-preview').textContent;
+      copyToClipboard(promptText, "프롬프트가 복사되었어요! AI 창에 붙여넣어 주세요.");
     }
 
-    // Initial Load Setup
-    window.addEventListener('DOMContentLoaded', () => {
-      renderAbilities();
+    // Initial Load
+    window.onload = function() {
+      renderGrid();
       updatePromptPreview();
-    });
+    };
   </script>
 </body>
 </html>
