@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>능력 설정 도우미 (ABILITY GUIDE)</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=21244"></script><script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
         body {
@@ -81,72 +81,78 @@
             <!-- TAB 1: 견본에서 고르기 -->
             <section id="tab1-content" class="space-y-8">
                 
-                <!-- RANDOM DRAW BOX -->
-                <div class="bg-white border border-[#E2E4E8] card-accent-olive rounded-[2px] p-5 shadow-sm">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 dashed-divider">
+                <!-- Random Draw Panel -->
+                <section class="bg-white border border-[#E2E4E8] rounded-xl p-5 shadow-sm card-accent-olive">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-[#5B6835]"></span>
-                                <h2 class="font-bold text-base text-[#18181B]">랜덤 뽑기 (Random Draw)</h2>
+                                <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#5B6835]"></span>
+                                <h2 class="text-base font-bold text-[#18181B]">랜덤 뽑기 (Random Draw)</h2>
                             </div>
-                            <p class="text-xs text-[#64676E] mt-0.5">어떤 능력을 사용할지 고민될 때 원클릭으로 가볍게 뽑아보세요.</p>
+                            <p class="text-xs text-[#64676E] mt-0.5">어떤 능력이 나올지 고민될 때 버튼을 눌러보세요.</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <select id="random-filter" class="text-xs border border-[#D0D4DC] rounded-[2px] px-3 py-2 bg-white text-[#18181B] focus:outline-none focus:border-[#5B6835]">
-                                <option value="전체">전체 (38종)</option>
-                                <option value="실전용">실전용 (21종)</option>
-                                <option value="예능용">예능용 (17종)</option>
-                            </select>
-                            <button onclick="drawRandomAbility()" class="px-4 py-2 bg-[#5B6835] hover:bg-[#4a552b] text-white text-xs font-semibold rounded-[2px] transition-colors flex items-center gap-1.5 shadow-sm">
-                                <span>🎲</span>
-                                <span>랜덤 뽑기</span>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Random Draw Category Filter -->
+                            <div class="inline-flex rounded-lg border border-gray-300 p-0.5 bg-white text-xs">
+                                <button onclick="setDrawCategory('전체')" id="draw-cat-전체" aria-pressed="true" class="px-2.5 py-1 rounded-md font-medium bg-[#5B6835] text-white transition">전체</button>
+                                <button onclick="setDrawCategory('실전용')" id="draw-cat-실전용" aria-pressed="false" class="px-2.5 py-1 rounded-md font-medium text-[#64676E] hover:text-[#18181B] transition">실전용</button>
+                                <button onclick="setDrawCategory('예능용')" id="draw-cat-예능용" aria-pressed="false" class="px-2.5 py-1 rounded-md font-medium text-[#64676E] hover:text-[#18181B] transition">예능용</button>
+                            </div>
+
+                            <button onclick="drawRandomAbility()" class="px-4 py-2 bg-[#5B6835] hover:bg-[#49542A] text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5 active:scale-95">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                능력 뽑기!
                             </button>
                         </div>
                     </div>
 
-                    <!-- DRAW RESULT DISPLAY AREA -->
-                    <div id="random-result-container" class="mt-4 hidden">
-                        <div id="random-result-card" class="bg-[#F1F3EA] border border-[#CBD1B8] rounded-[2px] p-4">
-                            <!-- Injected by JS -->
-                        </div>
+                    <!-- Random Result Card Display Slot -->
+                    <div id="random-result-box" aria-live="polite" class="bg-white border border-[#E2E4E8] rounded-lg p-4 transition-all">
+                        <p class="text-xs sm:text-sm text-[#64676E] text-center py-4">버튼을 눌러 무작위 능력을 뽑아보세요!</p>
                     </div>
-                </div>
+                </section>
 
-                <!-- FILTER & SEARCH BAR -->
-                <div class="space-y-4">
+                <!-- Filter & Search Bar -->
+                <section class="bg-white border border-[#E2E4E8] rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <!-- Category Filter Pills -->
-                        <div class="flex flex-wrap items-center gap-1.5" id="category-pills">
-                            <button onclick="setCategoryFilter('전체')" data-cat="전체" class="cat-pill px-3 py-1.5 text-xs font-semibold rounded-[2px] border bg-[#4355A8] text-white border-[#4355A8]">전체 (38)</button>
-                            <button onclick="setCategoryFilter('실전용')" data-cat="실전용" class="cat-pill px-3 py-1.5 text-xs font-medium rounded-[2px] border bg-white text-[#64676E] border-[#E2E4E8] hover:border-[#C5CEE8]">실전용 (21)</button>
-                            <button onclick="setCategoryFilter('예능용')" data-cat="예능용" class="cat-pill px-3 py-1.5 text-xs font-medium rounded-[2px] border bg-white text-[#64676E] border-[#E2E4E8] hover:border-[#E5CEB3]">예능용 (17)</button>
-                        </div>
 
                         <!-- Search Input -->
-                        <div class="relative w-full md:w-72">
-                            <input type="text" id="search-input" oninput="renderAbilities()" placeholder="능력명, 계열, 스킬 검색..." class="w-full text-xs border border-[#D0D4DC] rounded-[2px] pl-8 pr-3 py-2 bg-white text-[#18181B] focus:outline-none focus:border-[#4355A8]">
-                            <svg class="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[#838891]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <div class="relative flex-1">
+                            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#64676E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="text" id="search-input" oninput="renderAbilities()" aria-label="능력 검색" placeholder="능력명, 계열, 스킬명, 제약 검색..."
+                                class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#4355A8] focus:bg-white transition">
+                        </div>
+
+                        <!-- Live Count Indicator -->
+                        <div class="text-xs font-semibold text-[#64676E] shrink-0 self-end md:self-center bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
+                            <span id="live-count" role="status"></span>
                         </div>
                     </div>
 
-                    <!-- Grade Filter Pills & Count -->
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <div class="flex flex-wrap items-center gap-1" id="grade-pills">
-                            <span class="text-xs text-[#838891] mr-1">등급:</span>
-                            <button onclick="setGradeFilter('전체')" data-grade="전체" class="grade-pill px-2.5 py-1 text-xs font-semibold rounded-[2px] bg-[#18181B] text-white">전체</button>
-                            <button onclick="setGradeFilter('S')" data-grade="S" class="grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#4355A8] border border-[#C5CEE8]">S</button>
-                            <button onclick="setGradeFilter('A')" data-grade="A" class="grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#5B6835] border border-[#CBD1B8]">A</button>
-                            <button onclick="setGradeFilter('B')" data-grade="B" class="grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#B58149] border border-[#E5CEB3]">B</button>
-                            <button onclick="setGradeFilter('C')" data-grade="C" class="grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#64676E] border border-[#E2E4E8]">C</button>
-                            <button onclick="setGradeFilter('D')" data-grade="D" class="grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#64676E] border border-[#E2E4E8]">D</button>
-                            <button onclick="setGradeFilter('E')" data-grade="E" class="grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#64676E] border border-[#E2E4E8]">E</button>
-                            <button onclick="setGradeFilter('F')" data-grade="F" class="grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#64676E] border border-[#E2E4E8]">F</button>
+                    <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2 border-t border-gray-100 text-xs">
+                        <!-- Category Pills -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-[#64676E] mr-1">분류:</span>
+                            <button onclick="setCategoryFilter('전체')" id="filter-cat-전체" aria-pressed="true" class="filter-pill-cat px-2.5 py-1 rounded-md font-semibold bg-gray-800 text-white">전체</button>
+                            <button onclick="setCategoryFilter('실전용')" id="filter-cat-실전용" aria-pressed="false" class="filter-pill-cat px-2.5 py-1 rounded-md font-medium text-[#64676E] bg-gray-100 hover:bg-gray-200">실전용</button>
+                            <button onclick="setCategoryFilter('예능용')" id="filter-cat-예능용" aria-pressed="false" class="filter-pill-cat px-2.5 py-1 rounded-md font-medium text-[#64676E] bg-gray-100 hover:bg-gray-200">예능용</button>
                         </div>
-                        <div class="text-xs text-[#838891]">
-                            검색 결과: <span id="result-count" class="font-bold text-[#18181B]">38</span>개
+
+                        <!-- Grade Pills -->
+                        <div class="flex items-center gap-1 flex-wrap">
+                            <span class="font-bold text-[#64676E] mr-1">등급:</span>
+                            <button onclick="setGradeFilter('전체')" id="filter-grade-전체" aria-pressed="true" class="filter-pill-grade px-2 py-0.5 rounded font-semibold bg-gray-800 text-white">전체</button>
+                            <button onclick="setGradeFilter('S')" id="filter-grade-S" aria-pressed="false" class="filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200">S</button>
+                            <button onclick="setGradeFilter('A')" id="filter-grade-A" aria-pressed="false" class="filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200">A</button>
+                            <button onclick="setGradeFilter('B')" id="filter-grade-B" aria-pressed="false" class="filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200">B</button>
+                            <button onclick="setGradeFilter('C')" id="filter-grade-C" aria-pressed="false" class="filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200">C</button>
+                            <button onclick="setGradeFilter('D')" id="filter-grade-D" aria-pressed="false" class="filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200">D</button>
+                            <button onclick="setGradeFilter('E')" id="filter-grade-E" aria-pressed="false" class="filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200">E</button>
+                            <button onclick="setGradeFilter('F')" id="filter-grade-F" aria-pressed="false" class="filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200">F</button>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 <!-- ABILITY CARDS GRID -->
                 <div id="ability-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -198,14 +204,14 @@
                         <div>
                             <label class="block text-xs font-semibold text-[#18181B] mb-1.5">희망 등급 설정</label>
                             <select id="prompt-grade" onchange="updatePromptText()" class="w-full text-xs border border-[#D0D4DC] rounded-[2px] px-3 py-2 bg-white text-[#18181B] focus:outline-none focus:border-[#4355A8]">
-                                <option value="자동 추천">자동 추천 (AI가 판단)</option>
-                                <option value="S">S등급 (세계관 최상위급)</option>
-                                <option value="A">A등급 (고급 각성자급)</option>
-                                <option value="B">B등급 (숙련자/실전급)</option>
-                                <option value="C">C등급 (일반/조력자급)</option>
-                                <option value="D">D등급 (보조/생활급)</option>
-                                <option value="E">E등급 (사소한/소소한급)</option>
-                                <option value="F">F등급 (잉여/재미용급)</option>
+                                <option value="자동 추천">자동 추천</option>
+                                <option value="S">S등급</option>
+                                <option value="A">A등급</option>
+                                <option value="B">B등급</option>
+                                <option value="C">C등급</option>
+                                <option value="D">D등급</option>
+                                <option value="E">E등급</option>
+                                <option value="F">F등급</option>
                             </select>
                         </div>
                         <div>
@@ -213,7 +219,7 @@
                             <select id="prompt-mood" onchange="updatePromptText()" class="w-full text-xs border border-[#D0D4DC] rounded-[2px] px-3 py-2 bg-white text-[#18181B] focus:outline-none focus:border-[#4355A8]">
                                 <option value="자동">자동 (입력 내용에 맞춤)</option>
                                 <option value="실전용">실전용 (전투·유용한 메커니즘)</option>
-                                <option value="예능용">예능용 (유머·특이한 규칙/제약)</option>
+                                <option value="예능용">예능용 (특이한 규칙·제약)</option>
                             </select>
                         </div>
                     </div>
@@ -221,7 +227,7 @@
                     <!-- Textarea -->
                     <div>
                         <label id="input-textarea-label" class="block text-xs font-semibold text-[#18181B] mb-1.5">프로필 정보 입력</label>
-                        <textarea id="prompt-input-text" oninput="updatePromptText()" rows="4" placeholder="예: 이름: 한세벽 / 20대 후반, 냉철하고 차분한 성격. 시간 다루는 능력을 선호하지만 몸이 약함." class="w-full text-xs border border-[#D0D4DC] rounded-[2px] p-3 bg-white text-[#18181B] focus:outline-none focus:border-[#4355A8] resize-y"></textarea>
+                        <textarea id="prompt-input-text" oninput="updatePromptText()" rows="4" placeholder="예) 이름: 김유저 / 20대 초반 / 시간 다루는 능력 선호 / 몸이 약함" class="w-full text-xs border border-[#D0D4DC] rounded-[2px] p-3 bg-white text-[#18181B] focus:outline-none focus:border-[#4355A8] resize-y"></textarea>
                     </div>
                 </div>
 
@@ -635,6 +641,7 @@
         let currentTab = 'tab1';
         let currentCategoryFilter = '전체';
         let currentGradeFilter = '전체';
+        let drawCategoryFilter = '전체';
         let selectedReferenceAbility = null;
 
         // Initialize App
@@ -664,28 +671,28 @@
             }
         }
 
-        // Filtering Logic
+        // Filter Logic
         function setCategoryFilter(cat) {
             currentCategoryFilter = cat;
-            document.querySelectorAll('#category-pills .cat-pill').forEach(btn => {
-                if (btn.getAttribute('data-cat') === cat) {
-                    btn.className = "cat-pill px-3 py-1.5 text-xs font-semibold rounded-[2px] border bg-[#4355A8] text-white border-[#4355A8]";
-                } else {
-                    btn.className = "cat-pill px-3 py-1.5 text-xs font-medium rounded-[2px] border bg-white text-[#64676E] border-[#E2E4E8] hover:border-[#C5CEE8]";
-                }
+            document.querySelectorAll('.filter-pill-cat').forEach(btn => {
+                btn.setAttribute("aria-pressed", "false");
+                btn.className = "filter-pill-cat px-2.5 py-1 rounded-md font-medium text-[#64676E] bg-gray-100 hover:bg-gray-200";
             });
+            const selected = document.getElementById(`filter-cat-${cat}`);
+            selected.setAttribute("aria-pressed", "true");
+            selected.className = "filter-pill-cat px-2.5 py-1 rounded-md font-semibold bg-gray-800 text-white";
             renderAbilities();
         }
 
         function setGradeFilter(grade) {
             currentGradeFilter = grade;
-            document.querySelectorAll('#grade-pills .grade-pill').forEach(btn => {
-                if (btn.getAttribute('data-grade') === grade) {
-                    btn.className = "grade-pill px-2.5 py-1 text-xs font-semibold rounded-[2px] bg-[#18181B] text-white";
-                } else {
-                    btn.className = "grade-pill px-2.5 py-1 text-xs font-medium rounded-[2px] bg-white text-[#64676E] border border-[#E2E4E8]";
-                }
+            document.querySelectorAll('.filter-pill-grade').forEach(btn => {
+                btn.setAttribute("aria-pressed", "false");
+                btn.className = "filter-pill-grade px-2 py-0.5 rounded text-[#64676E] bg-gray-100 hover:bg-gray-200";
             });
+            const selected = document.getElementById(`filter-grade-${grade}`);
+            selected.setAttribute("aria-pressed", "true");
+            selected.className = "filter-pill-grade px-2 py-0.5 rounded font-semibold bg-gray-800 text-white";
             renderAbilities();
         }
 
@@ -716,12 +723,13 @@
                 const matchSearch = searchQuery === "" || 
                     item.name.toLowerCase().includes(searchQuery) ||
                     item.type.toLowerCase().includes(searchQuery) ||
+                    item.constraint.toLowerCase().includes(searchQuery) ||
                     skillTexts.toLowerCase().includes(searchQuery);
 
                 return matchCategory && matchGrade && matchSearch;
             });
 
-            document.getElementById('result-count').textContent = filtered.length;
+            document.getElementById('live-count').textContent = `총 ${abilitiesData.length}개 중 ${filtered.length}개 표시`;
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
@@ -791,49 +799,51 @@
             }).join('');
         }
 
-        // Random Draw Function
+        // Random Draw System
+        function setDrawCategory(cat) {
+            drawCategoryFilter = cat;
+            ['전체', '실전용', '예능용'].forEach(c => {
+                const btn = document.getElementById(`draw-cat-${c}`);
+                btn.setAttribute("aria-pressed", String(c === cat));
+                if (c === cat) {
+                    btn.className = "px-2.5 py-1 rounded-md font-medium bg-[#5B6835] text-white transition";
+                } else {
+                    btn.className = "px-2.5 py-1 rounded-md font-medium text-[#64676E] hover:text-[#18181B] transition";
+                }
+            });
+        }
+
         function drawRandomAbility() {
-            const filterVal = document.getElementById('random-filter').value;
             let pool = abilitiesData;
-            if (filterVal !== '전체') {
-                pool = abilitiesData.filter(a => a.category === filterVal);
+            if (drawCategoryFilter !== '전체') {
+                pool = abilitiesData.filter(a => a.category === drawCategoryFilter);
             }
-
             const randomIndex = Math.floor(Math.random() * pool.length);
-            const drawn = pool[randomIndex];
+            const drawnAbility = pool[randomIndex];
 
-            const container = document.getElementById('random-result-container');
-            const card = document.getElementById('random-result-card');
-
-            const gradeBadge = getGradeBadgeStyle(drawn.grade);
-
-            card.innerHTML = `
-                <div class="flex items-center justify-between gap-2 mb-2">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold px-2 py-0.5 rounded-[2px] border ${gradeBadge}">${drawn.grade}등급</span>
-                        <span class="text-xs font-semibold text-[#5B6835]">[${drawn.category}]</span>
-                        <span class="text-xs font-bold text-[#18181B]">${drawn.name}</span>
-                        <span class="text-xs text-[#64676E]">(${drawn.type})</span>
+            const box = document.getElementById('random-result-box');
+            box.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 bg-gray-900 text-white font-bold text-xs rounded">${drawnAbility.grade}등급</span>
+                            <span class="text-xs font-semibold text-[#5B6835]">${drawnAbility.category}</span>
+                            <span class="text-xs text-[#64676E]">〡 ${drawnAbility.type}</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-[#18181B]">${drawnAbility.name}</h4>
+                        <p class="text-xs text-[#64676E] mt-1"><strong>제약:</strong> ${drawnAbility.constraint}</p>
                     </div>
-                    <span class="text-[11px] text-[#5B6835] font-semibold">뽑힌 능력</span>
-                </div>
-                <div class="text-xs space-y-1 mb-3 text-[#18181B]">
-                    ${drawn.skills.map(s => `<div><strong>${s.name}</strong> 〡 ${s.desc}</div>`).join('')}
-                </div>
-                <div class="text-[11px] text-[#64676E] mb-3">
-                    <strong>제약:</strong> ${drawn.constraint}
-                </div>
-                <div class="flex items-center gap-2 pt-2 border-t border-[#CBD1B8]">
-                    <button onclick="copyAbilityText(${drawn.id})" class="px-3 py-1.5 bg-white border border-[#CBD1B8] hover:bg-[#F8F9FA] text-[#18181B] text-xs font-semibold rounded-[2px]">
-                        복사하기
-                    </button>
-                    <button onclick="selectAsReference(${drawn.id})" class="px-3 py-1.5 bg-[#5B6835] hover:bg-[#4a552b] text-white text-xs font-semibold rounded-[2px]">
-                        변형해서 만들기 →
-                    </button>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="copyAbilityText(${drawnAbility.id})" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-[#18181B] text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                            복사하기
+                        </button>
+                        <button onclick="selectAsReference(${drawnAbility.id})" class="px-3 py-1.5 bg-[#5B6835] hover:bg-[#49542A] text-white text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                            변형해서 만들기 →
+                        </button>
+                    </div>
                 </div>
             `;
-
-            container.classList.remove('hidden');
         }
 
         // Format Ability Text for Copying
@@ -888,7 +898,7 @@ ${item.skills[2].name}〡${item.skills[2].desc}
 
             if (mode === 'profile') {
                 labelEl.textContent = "프로필 정보 입력";
-                textareaEl.placeholder = "예: 이름: 한세벽 / 20대 후반, 냉철하고 차분한 성격. 시간 다루는 능력을 선호하지만 몸이 약함.";
+                textareaEl.placeholder = "예) 이름: 김유저 / 20대 초반 / 시간 다루는 능력 선호 / 몸이 약함";
             } else {
                 labelEl.textContent = "컨셉 / 키워드 입력";
                 textareaEl.placeholder = "예: 거울, 환영, 차원 이동, 그림자 제어, 연금술사 컨셉 등";
