@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>능력 설정 도우미 (ABILITY GUIDE)</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=40415"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
         body {
@@ -910,13 +910,7 @@
 
                             <!-- 3 Skills List -->
                             <div class="space-y-1.5 mb-4 text-xs">
-                                ${item.skills.map(s => `
-                                    <div class="leading-snug">
-                                        <span class="font-bold text-[#18181B]">${s.name}</span>
-                                        <span class="text-[#838891] mx-1">〡</span>
-                                        <span class="text-[#64676E]">${s.desc}</span>
-                                    </div>
-                                `).join('')}
+                                ${renderSkillRows(item.skills)}
                             </div>
                         </div>
 
@@ -941,6 +935,16 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        function renderSkillRows(skills) {
+            return skills.map(skill => `
+                <div class="leading-snug">
+                    <span class="font-bold text-[#18181B]">${skill.name}</span>
+                    <span class="text-[#838891] mx-1">〡</span>
+                    <span class="text-[#64676E]">${skill.desc}</span>
+                </div>
+            `).join('');
         }
 
         // Random Draw System
@@ -975,6 +979,9 @@
                             <span class="text-xs text-[#64676E]">〡 ${drawnAbility.type}</span>
                         </div>
                         <h4 class="text-lg font-bold text-[#18181B]">${drawnAbility.name}</h4>
+                        <div class="space-y-1.5 my-2 text-xs">
+                            ${renderSkillRows(drawnAbility.skills)}
+                        </div>
                         <p class="text-xs text-[#64676E] mt-1"><strong>제약:</strong> ${drawnAbility.constraint}</p>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
