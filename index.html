@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>능력 설정 도우미 (ABILITY GUIDE)</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=44690"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=45928"></script><script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
         body {
@@ -89,7 +89,7 @@
                                 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#5B6835]"></span>
                                 <h2 class="text-base font-bold text-[#18181B]">랜덤 뽑기</h2>
                             </div>
-                            <p class="text-xs text-[#64676E] mt-0.5">어떤 능력을 고를지 고민될 때 버튼을 눌러보세요.</p>
+                            <p class="text-xs text-[#64676E] mt-0.5">어떤 능력이 나올지 고민될 때 버튼을 눌러보세요.</p>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2">
@@ -592,7 +592,7 @@
             {
                 id: 67, grade: "S", category: "예능용", type: "과금계", name: "지갑 전사",
                 skills: [
-                    { name: "결제", desc: "돈을 쓴 만큼 즉시 전투력 상승" },
+                    { name: "결제", desc: "돈을 쓴 만큼 즉시 전투력 상승 (1만 원당 한 단계)" },
                     { name: "확률형 뽑기", desc: "무작위 전설 스킬 하나를 뽑아 1분간 사용" },
                     { name: "VIP 혜택", desc: "누적 결제액이 일정 금액을 넘으면 모든 능력치 상시 보정" }
                 ],
@@ -952,7 +952,7 @@
                 const gradeBadge = getGradeBadgeStyle(item.grade);
 
                 return `
-                    <div class="bg-white border border-[#E2E4E8] ${accentClass} rounded-[2px] p-4 flex flex-col justify-between shadow-sm hover:shadow transition-shadow">
+                    <div class="bg-white border border-[#E2E4E8] ${accentClass} rounded-[2px] p-4 flex flex-col justify-between shadow-sm hover:shadow-[0_3px_7px_rgba(24,24,27,0.16)] transition-shadow">
                         <div>
                             <!-- Card Header Row -->
                             <div class="flex items-center justify-between gap-2 mb-2">
