@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>능력 설정 도우미 (ABILITY GUIDE)</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=42967"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=44690"></script><script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
         body {
@@ -288,7 +288,7 @@
 
     <!-- APPLICATION SCRIPT -->
     <script>
-        // --- DATASET: COMPLETE 41 ABILITIES ---
+        // --- DATASET: COMPLETE 60 ABILITIES ---
         const abilitiesData = [
             // [실전용]
             {
@@ -317,6 +317,15 @@
                     { name: "파산 선고", desc: "미래의 체력을 담보로 1분간 모든 신체 능력을 극한 증폭" }
                 ],
                 constraint: "선지급한 결과의 원인(공격 모션)을 1분 내에 수행하지 않으면, 시전자가 동일한 피해를 그대로 되돌려 받는다."
+            },
+            {
+                id: 55, grade: "S", category: "실전용", type: "시간계", name: "정체 영역",
+                skills: [
+                    { name: "감속장", desc: "반경 20m 안의 시간 흐름을 10분의 1로 늦춤" },
+                    { name: "단독 가속", desc: "영역 안에서 시전자 본인만 정상 속도로 움직임" },
+                    { name: "정지 각인", desc: "영역 안의 투사체나 물체 하나를 공중에 완전히 멈춰 고정" }
+                ],
+                constraint: "영역 안에서 보낸 체감 시간만큼 시전자의 몸은 그대로 노화한다. 영역을 펼치는 동안에는 그 밖으로 나갈 수 없다."
             },
             {
                 id: 5, grade: "A", category: "실전용", type: "음파계", name: "종말의 교향곡",
@@ -418,6 +427,24 @@
                 constraint: "이미 절단된 신체 부위나 사망한 대상은 되살릴 수 없으며, 치유한 상처의 고통 일부를 시전자가 고스란히 느낀다."
             },
             {
+                id: 56, grade: "B", category: "실전용", type: "정신계", name: "기억 절취",
+                skills: [
+                    { name: "기억 탈취", desc: "맨손으로 잡은 대상의 최근 30초 기억을 빼앗아 그 작전과 정보를 알아냄" },
+                    { name: "공백 유발", desc: "직전 기억을 지워 적이 방금 무엇을 하려 했는지 잊게 만듦" },
+                    { name: "허위 주입", desc: "10초짜리 가짜 기억을 심어 아군 위치나 함정을 착각하게 함" }
+                ],
+                constraint: "대상과 맨살이 닿아 있어야 한다. 빼앗은 기억에 담긴 감정과 고통을 시전자도 그대로 겪는다."
+            },
+            {
+                id: 57, grade: "B", category: "실전용", type: "화학계", name: "부식 분비",
+                skills: [
+                    { name: "산성 분무", desc: "손바닥에서 강산을 흩뿌려 금속 갑주와 무기의 표면을 녹임" },
+                    { name: "부식 각인", desc: "접촉한 장비에 부식을 심어 시간이 지날수록 내구도를 깎아냄" },
+                    { name: "중화", desc: "체내에 들어온 독이나 산성 물질을 반대 성분으로 상쇄" }
+                ],
+                constraint: "본인 피부도 산에 상해 전용 장갑 없이는 오래 쓸 수 없다. 부식은 서서히 진행돼서 한 방에 끝내는 데는 맞지 않는다."
+            },
+            {
                 id: 16, grade: "C", category: "실전용", type: "감각계", name: "궤적 예고",
                 skills: [
                     { name: "예고선", desc: "0.5초 뒤 날아올 공격 궤적이 보임" },
@@ -445,6 +472,24 @@
                 constraint: "공중에 뜬 대상에겐 쓸 수 없으며, 화염이나 열기가 강한 곳에선 얼음이 즉시 녹는다."
             },
             {
+                id: 58, grade: "C", category: "실전용", type: "음향계", name: "음성 모사",
+                skills: [
+                    { name: "성대 복제", desc: "한 번 들은 목소리를 그대로 흉내 냄" },
+                    { name: "거짓 명령", desc: "적 지휘관의 목소리로 엉뚱한 지시를 내려 혼란 유발" },
+                    { name: "방향 위장", desc: "자기 목소리가 다른 방향에서 들리도록 꾸밈" }
+                ],
+                constraint: "10초 이상 들어본 목소리만 흉내 낼 수 있다. 몬스터의 울음이나 비언어적 소리는 따라 하지 못한다."
+            },
+            {
+                id: 59, grade: "C", category: "실전용", type: "역학계", name: "탄도 굴절",
+                skills: [
+                    { name: "궤도 비틀기", desc: "자신에게 날아오는 투사체의 각도를 15도 이상 꺾어 회피" },
+                    { name: "도탄 사격", desc: "벽이나 바닥에 튕긴 투사체의 위력을 유지한 채 사각지대 타격" },
+                    { name: "풍압 가속", desc: "던진 무기의 공기 저항을 없애 사거리와 속도를 증폭" }
+                ],
+                constraint: "시야에 포착된 투사체에만 반응할 수 있으며, 자동차 이상의 거대한 물체는 궤도를 바꿀 수 없다."
+            },
+            {
                 id: 21, grade: "D", category: "실전용", type: "조작계", name: "실타래 봉합",
                 skills: [
                     { name: "임시 꿰매기", desc: "찢어진 옷이나 얕은 상처를 보이지 않는 실로 봉합" },
@@ -454,6 +499,24 @@
                 constraint: "실은 가위나 칼날에 쉽게 끊어지며, 한 번에 10m 이상 길게 뽑아낼 수 없다."
             },
             {
+                id: 60, grade: "D", category: "실전용", type: "기능계", name: "즉석 숙련",
+                skills: [
+                    { name: "손에 익음", desc: "처음 잡은 무기나 도구도 숙련자 수준으로 다룸" },
+                    { name: "구조 파악", desc: "기계나 장치를 1분 만져보면 작동 원리를 이해함" },
+                    { name: "임시 수리", desc: "고장 난 장비를 주변 재료로 응급 수리해 잠시 다시 쓰게 함" }
+                ],
+                constraint: "숙련은 손에서 놓으면 바로 사라진다. 시전자의 원래 체력과 근력 이상으로는 다룰 수 없다."
+            },
+            {
+                id: 61, grade: "D", category: "실전용", type: "분석계", name: "체력 계측",
+                skills: [
+                    { name: "잔량 표시", desc: "대상의 남은 체력이 머리 위 막대로 보임" },
+                    { name: "한계 경보", desc: "아군 체력이 30% 아래로 떨어지면 바로 알아챔" },
+                    { name: "마무리 타이밍", desc: "적이 한 번만 더 맞으면 쓰러질 때를 알려줌" }
+                ],
+                constraint: "수치만 보일 뿐 약점이나 공략법은 알려주지 않는다. 동시에 세 명까지만 볼 수 있다."
+            },
+            {
                 id: 45, grade: "E", category: "실전용", type: "감각계", name: "방향 감각",
                 skills: [
                     { name: "절대 방위", desc: "어디서든 동서남북과 고도를 정확히 앎" },
@@ -461,6 +524,42 @@
                     { name: "공간 왜곡 감지", desc: "공간이 뒤틀리면 알아챔" }
                 ],
                 constraint: "길을 알 뿐 위험은 알려주지 않는다. 순간이동으로 옮겨지면 감각이 초기화된다."
+            },
+            {
+                id: 62, grade: "E", category: "실전용", type: "생체계", name: "체온 유지",
+                skills: [
+                    { name: "항온 방어", desc: "극한의 추위나 폭염 속에서도 정상 체온을 일정하게 유지" },
+                    { name: "열기 발산", desc: "손을 맞댄 아군에게 온기를 나누어 저체온증을 방지" },
+                    { name: "냉각 호흡", desc: "화염이나 열기를 들이마셔도 호흡기 화상을 입지 않음" }
+                ],
+                constraint: "직접적인 화염 공격이나 빙결 공격의 물리적 타격은 막지 못하며, 극한 환경에선 체력 소모가 빨라진다."
+            },
+            {
+                id: 63, grade: "E", category: "실전용", type: "정신계", name: "포토 메모리",
+                skills: [
+                    { name: "순간 암기", desc: "한 번 훑어본 지도나 문서의 내용을 사진처럼 완벽하게 기억" },
+                    { name: "동선 복기", desc: "복잡한 미로나 건물의 구조를 머릿속에서 3D로 재구성" },
+                    { name: "암호 해독", desc: "기억해 둔 패턴과 대조해 단순한 암호나 함정 장치를 빠르게 파악" }
+                ],
+                constraint: "직접 전투 능력은 전혀 없으며, 너무 많은 정보를 한꺼번에 외우면 극심한 편두통이 온다."
+            },
+            {
+                id: 64, grade: "F", category: "실전용", type: "생체계", name: "쪽잠",
+                skills: [
+                    { name: "즉시 수면", desc: "어디서든 눈을 감는 순간 바로 잠듦" },
+                    { name: "압축 휴식", desc: "10분만 자도 2시간 잔 만큼 피로가 풀림" },
+                    { name: "자동 기상", desc: "정해둔 시간이나 위험한 기척에 저절로 눈이 떠짐" }
+                ],
+                constraint: "잠든 동안 아무것도 할 수 없어 혼자서는 위험하다. 하루에 세 번까지만 압축 휴식이 된다."
+            },
+            {
+                id: 65, grade: "F", category: "실전용", type: "식물계", name: "약초 감별",
+                skills: [
+                    { name: "식용 판별", desc: "눈앞의 식물이 먹을 수 있는지 한눈에 알아봄" },
+                    { name: "약효 감지", desc: "상처나 해독에 쓸 수 있는 풀을 찾아냄" },
+                    { name: "독초 경고", desc: "독이 든 식물에 손이 가면 저절로 손이 멈칫함" }
+                ],
+                constraint: "식물에만 통하고, 던전 속 변이 식물은 판별이 틀릴 때가 있다. 약초를 찾아도 쓰는 법은 따로 알아야 한다."
             },
             // [예능용]
             {
@@ -482,6 +581,24 @@
                 constraint: "규칙은 본인에게도 똑같이 적용된다. 한 문장으로 말할 수 있는 규칙만 정할 수 있다."
             },
             {
+                id: 66, grade: "S", category: "예능용", type: "예지계", name: "스포일러",
+                skills: [
+                    { name: "결말 폭로", desc: "적의 필살기나 작전을 미리 말로 읊어 위력을 반감시킴" },
+                    { name: "흥미 상실", desc: "앞으로 일어날 전개를 스포일러해 적의 전의를 급격히 꺾음" },
+                    { name: "전개 수정", desc: "방금 폭로한 미래가 너무 뻔하다며 다른 결과로 강제 비틀기" }
+                ],
+                constraint: "상대가 귀를 막거나 시전자의 목소리를 듣지 못하면 발동하지 않으며, 본인의 미래는 절대 볼 수 없다."
+            },
+            {
+                id: 67, grade: "S", category: "예능용", type: "과금계", name: "지갑 전사",
+                skills: [
+                    { name: "결제", desc: "돈을 쓴 만큼 즉시 전투력 상승 (1만 원당 한 단계)" },
+                    { name: "확률형 뽑기", desc: "무작위 전설 스킬 하나를 뽑아 1분간 사용" },
+                    { name: "VIP 혜택", desc: "누적 결제액이 일정 금액을 넘으면 모든 능력치 상시 보정" }
+                ],
+                constraint: "시전자의 실제 계좌에서 돈이 빠져나간다. 환불은 절대 불가하며 뽑기는 대부분 꽝이 나온다."
+            },
+            {
                 id: 48, grade: "A", category: "예능용", type: "결계계", name: "관객석",
                 skills: [
                     { name: "개막", desc: "지켜보는 사람이 많을수록 전투력 상승" },
@@ -498,6 +615,15 @@
                     { name: "선수 교체", desc: "타임아웃 중에 아군 한 명과 위치를 바꿈" }
                 ],
                 constraint: "멈춘 동안에는 누구도 공격할 수 없다. 한 번에 1분까지, 하루 세 번만 쓸 수 있다."
+            },
+            {
+                id: 68, grade: "A", category: "예능용", type: "통신계", name: "단톡방 소환",
+                skills: [
+                    { name: "초대", desc: "단톡방에 초대한 아군을 시전자 곁으로 즉시 소환" },
+                    { name: "공지 고정", desc: "공지로 올린 작전을 아군 전원이 자동으로 숙지" },
+                    { name: "강퇴", desc: "적 하나를 '내보내기' 처리해 전장 밖으로 튕겨냄" }
+                ],
+                constraint: "메시지를 읽은 사람만 소환된다. '1'이 사라지지 않으면 아무 일도 일어나지 않는다."
             },
             {
                 id: 22, grade: "B", category: "예능용", type: "규칙계", name: "골목대장",
@@ -563,6 +689,15 @@
                 constraint: "자막은 3초만 떠 있고 다시 보려면 1분 기다려야 한다. 모르는 언어는 번역되지 않는다."
             },
             {
+                id: 69, grade: "C", category: "예능용", type: "무시계", name: "읽씹",
+                skills: [
+                    { name: "읽씹", desc: "적의 말과 영창을 못 들은 것으로 처리해 정신계 스킬 무효" },
+                    { name: "안읽씹", desc: "적의 도발에 일절 반응하지 않아 어그로가 풀림" },
+                    { name: "차단", desc: "대상 하나가 1분간 시전자에게 말을 걸지 못함" }
+                ],
+                constraint: "시전자가 대답하고 싶어지는 순간 효과가 풀린다. 아군의 말까지 함께 무시하게 된다."
+            },
+            {
                 id: 28, grade: "D", category: "예능용", type: "특수계", name: "만물 홈쇼핑",
                 skills: [
                     { name: "무료 반품", desc: "적의 투사체나 마법 공격에 영수증을 붙여 발사 원점으로 되돌림" },
@@ -588,6 +723,24 @@
                     { name: "연쇄 사과", desc: "사과한 대상 옆 사람도 따라 사과" }
                 ],
                 constraint: "대상이 실제로 본인에게 잘못한 게 있어야 통한다. 몬스터에게 쓰면 효과가 짧다."
+            },
+            {
+                id: 70, grade: "D", category: "예능용", type: "질서계", name: "줄 세우기",
+                skills: [
+                    { name: "한 줄로 서", desc: "주변 적들이 3초간 한 줄로 정렬함" },
+                    { name: "새치기 금지", desc: "줄을 벗어나려는 대상의 움직임을 둔화" },
+                    { name: "앞으로 나란히", desc: "줄 선 적들이 앞사람 어깨에 팔을 올리고 굳음" }
+                ],
+                constraint: "호루라기를 불어야 발동한다. 몬스터가 줄을 이해하지 못하면 아무 효과가 없다."
+            },
+            {
+                id: 71, grade: "D", category: "예능용", type: "평가계", name: "별점 테러",
+                skills: [
+                    { name: "1점 리뷰", desc: "적의 무기나 스킬에 혹평을 남겨 1분간 성능과 위력을 저하" },
+                    { name: "내돈내산", desc: "자신이 직접 써본 장비의 내구도와 효율을 소폭 끌어올림" },
+                    { name: "허위 매물", desc: "적의 화려한 기술이 겉보기보다 별것 없도록 연출만 과장시킴" }
+                ],
+                constraint: "반드시 해당 무기나 스킬을 직접 눈으로 보거나 겪어본 뒤에 구체적인 불만을 말해야 발동한다."
             },
             {
                 id: 32, grade: "E", category: "예능용", type: "인과계", name: "소확행 마스터",
@@ -626,6 +779,15 @@
                 constraint: "조금이라도 소리를 내거나 공격 의사를 드러내면 즉시 들키며, 이미 시전자를 주시하고 있는 대상에겐 통하지 않는다."
             },
             {
+                id: 72, grade: "E", category: "예능용", type: "시간계", name: "5분만 더",
+                skills: [
+                    { name: "스누즈", desc: "5분 더 자도 30분 잔 만큼 개운함" },
+                    { name: "알람 무시", desc: "깨우는 소리를 한 번은 못 들은 걸로 처리" },
+                    { name: "기상 직감", desc: "늦잠 자기 직전에 저절로 눈이 떠짐" }
+                ],
+                constraint: "하루 세 번까지만 쓸 수 있다. 네 번째 스누즈부터는 지각이 확정된다."
+            },
+            {
                 id: 37, grade: "F", category: "예능용", type: "감지계", name: "짝꿍 탐지기",
                 skills: [
                     { name: "양말 공명", desc: "한 짝만 남은 양말을 쥐면 나머지 한 짝의 위치를 나침반처럼 가리킴" },
@@ -660,6 +822,15 @@
                     { name: "페이드아웃", desc: "싸움이 끝나면 음악이 자연스럽게 잦아듦" }
                 ],
                 constraint: "음악은 주변 사람들도 다 들을 수 있다. 몰래 숨어 있을 때 갑자기 긴장감 넘치는 곡이 나온다."
+            },
+            {
+                id: 73, grade: "F", category: "예능용", type: "감지계", name: "자동문 친화력",
+                skills: [
+                    { name: "환영", desc: "시전자가 다가가면 어떤 자동문이든 반드시 열림" },
+                    { name: "대기 불필요", desc: "자동문이 열리기 전 멈칫하는 순간이 사라짐" },
+                    { name: "문 닫힘 방지", desc: "시전자가 지나갈 때까지 문이 닫히지 않음" }
+                ],
+                constraint: "손으로 여는 문에는 효과가 없다. 화장실 칸 문처럼 잠긴 문은 열리지 않는다."
             }
         ];
 
