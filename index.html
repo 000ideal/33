@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>능력 설정 도우미 (ABILITY GUIDE)</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=42046"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=42967"></script><script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
         body {
@@ -754,6 +754,15 @@
 
                 return matchCategory && matchGrade && matchSearch;
             });
+
+            if (currentCategoryFilter === '전체') {
+                const gradeOrder = 'SABCDEF';
+                const categoryOrder = ['실전용', '예능용'];
+                filtered.sort((a, b) =>
+                    gradeOrder.indexOf(a.grade) - gradeOrder.indexOf(b.grade) ||
+                    categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category)
+                );
+            }
 
             document.getElementById('live-count').textContent = `총 ${abilitiesData.length}개 중 ${filtered.length}개 표시`;
 
