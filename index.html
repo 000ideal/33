@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>능력 설정 도우미 (ABILITY GUIDE)</title>
     <!-- Tailwind CSS -->
-    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=79671"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=86274"></script><script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <style>
         body {
@@ -544,15 +544,6 @@
                 constraint: "직접 전투 능력은 전혀 없으며, 너무 많은 정보를 한꺼번에 외우면 극심한 편두통이 온다."
             },
             {
-                id: 64, grade: "F", category: "실전용", type: "녹음계", name: "소리 저장",
-                skills: [
-                    { name: "녹음", desc: "들은 소리를 10초 분량까지 머릿속에 저장" },
-                    { name: "재생", desc: "저장한 소리를 원하는 방향에서 그대로 재생" },
-                    { name: "증거 보존", desc: "녹음한 소리는 시간이 지나도 변하지 않고 남음" }
-                ],
-                constraint: "저장은 한 번에 하나만 되고 새로 녹음하면 이전 소리가 지워진다. 재생한 소리의 크기는 원래 소리를 넘을 수 없다."
-            },
-            {
                 id: 65, grade: "F", category: "실전용", type: "식물계", name: "약초 감별",
                 skills: [
                     { name: "식용 판별", desc: "눈앞의 식물이 먹을 수 있는지 한눈에 알아봄" },
@@ -560,6 +551,15 @@
                     { name: "독초 경고", desc: "독이 든 식물에 손이 가면 저절로 손이 멈칫함" }
                 ],
                 constraint: "식물에만 통하고, 던전 속 변이 식물은 판별이 틀릴 때가 있다. 약초를 찾아도 쓰는 법은 따로 알아야 한다."
+            },
+            {
+                id: 64, grade: "F", category: "실전용", type: "녹음계", name: "소리 저장",
+                skills: [
+                    { name: "녹음", desc: "들은 소리를 10초 분량까지 머릿속에 저장" },
+                    { name: "재생", desc: "저장한 소리를 원하는 방향에서 그대로 재생" },
+                    { name: "증거 보존", desc: "녹음한 소리는 시간이 지나도 변하지 않고 남음" }
+                ],
+                constraint: "저장은 한 번에 하나만 되고 새로 녹음하면 이전 소리가 지워진다. 재생한 소리의 크기는 원래 소리를 넘을 수 없다."
             },
             // [예능용]
             {
@@ -698,6 +698,15 @@
                 constraint: "시전자가 대답하고 싶어지는 순간 효과가 풀린다. 아군의 말까지 함께 무시하게 된다."
             },
             {
+                id: 74, grade: "C", category: "예능용", type: "언어계", name: "순화 번역기",
+                skills: [
+                    { name: "비즈니스 말투", desc: "적의 살벌한 위협이나 욕설을 정중한 직장인 말투로 변조" },
+                    { name: "동물 통역", desc: "몬스터의 포효나 동물의 울음소리를 일상적인 투정으로 번역" },
+                    { name: "분위기 숙연", desc: "격렬한 전투 구호를 어색한 번역체로 바꿔 적을 민망하게 함" }
+                ],
+                constraint: "언어적 위협이나 정신 공격만 약화시킬 뿐, 번역된 말이 끝나고 날아오는 물리 공격은 막지 못한다."
+            },
+            {
                 id: 28, grade: "D", category: "예능용", type: "특수계", name: "만물 홈쇼핑",
                 skills: [
                     { name: "무료 반품", desc: "적의 투사체나 마법 공격에 영수증을 붙여 발사 원점으로 되돌림" },
@@ -822,15 +831,6 @@
                     { name: "페이드아웃", desc: "싸움이 끝나면 음악이 자연스럽게 잦아듦" }
                 ],
                 constraint: "음악은 주변 사람들도 다 들을 수 있다. 몰래 숨어 있을 때 갑자기 긴장감 넘치는 곡이 나온다."
-            },
-            {
-                id: 73, grade: "F", category: "예능용", type: "감지계", name: "자동문 친화력",
-                skills: [
-                    { name: "환영", desc: "시전자가 다가가면 어떤 자동문이든 반드시 열림" },
-                    { name: "대기 불필요", desc: "자동문이 열리기 전 멈칫하는 순간이 사라짐" },
-                    { name: "문 닫힘 방지", desc: "시전자가 지나갈 때까지 문이 닫히지 않음" }
-                ],
-                constraint: "손으로 여는 문에는 효과가 없다. 화장실 칸 문처럼 잠긴 문은 열리지 않는다."
             }
         ];
 
